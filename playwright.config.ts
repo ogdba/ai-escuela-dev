@@ -18,7 +18,7 @@ export default defineConfig({
   },
   webServer: canBind
     ? {
-        command: "npm run build && npx next start --hostname 127.0.0.1 --port 3000",
+        command: "npx next start --hostname 127.0.0.1 --port 3000",
         port: 3000,
         reuseExistingServer: !process.env.CI,
         timeout: 120000,
