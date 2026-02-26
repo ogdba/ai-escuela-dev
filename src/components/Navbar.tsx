@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Sun, Moon, LogIn, LogOut } from "lucide-react";
+import { Menu, X, Sun, Moon, LogIn, LogOut, LayoutDashboard } from "lucide-react";
+import Link from "next/link";
 import { NAV, SITE } from "@/content/es";
 import { useTheme } from "./ThemeProvider";
 import { useAuth } from "./AuthProvider";
@@ -20,7 +21,7 @@ const navItems = [
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const { theme, toggle } = useTheme();
-  const { status, user, logout } = useAuth();
+  const { status, logout } = useAuth();
   const isAuthed = status === "authenticated";
 
   return (
@@ -43,19 +44,27 @@ export default function Navbar() {
               </a>
             ))}
             {isAuthed ? (
-              <button
-                onClick={logout}
-                className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition-colors"
-              >
-                <LogOut size={16} /> Salir
-              </button>
+              <>
+                <Link
+                  href="/dashboard"
+                  className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/30 transition-colors"
+                >
+                  <LayoutDashboard size={16} /> Dashboard
+                </Link>
+                <button
+                  onClick={logout}
+                  className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition-colors"
+                >
+                  <LogOut size={16} /> Salir
+                </button>
+              </>
             ) : (
-              <a
-                href="#demo"
-                className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-400 text-slate-900 text-sm font-semibold hover:bg-amber-300 transition-colors"
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-violet-600 text-white text-sm font-bold hover:bg-violet-700 transition-colors"
               >
                 <LogIn size={16} /> Iniciar sesión
-              </a>
+              </Link>
             )}
             <button
               onClick={toggle}
@@ -107,23 +116,32 @@ export default function Navbar() {
                 </a>
               ))}
               {isAuthed ? (
-                <button
-                  onClick={() => {
-                    logout();
-                    setOpen(false);
-                  }}
-                  className="mt-3 w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-slate-900 text-white text-sm font-semibold"
-                >
-                  <LogOut size={16} /> Cerrar sesión ({user?.email})
-                </button>
+                <>
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setOpen(false)}
+                    className="mt-3 w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-violet-600 dark:text-violet-400 font-semibold text-sm"
+                  >
+                    <LayoutDashboard size={16} /> Dashboard
+                  </Link>
+                  <button
+                    onClick={() => {
+                      logout();
+                      setOpen(false);
+                    }}
+                    className="mt-1 w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-slate-900 text-white text-sm font-semibold"
+                  >
+                    <LogOut size={16} /> Cerrar sesión
+                  </button>
+                </>
               ) : (
-                <a
-                  href="#demo"
+                <Link
+                  href="/login"
                   onClick={() => setOpen(false)}
-                  className="mt-3 w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-amber-400 text-slate-900 text-sm font-semibold"
+                  className="mt-3 w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-violet-600 text-white text-sm font-bold"
                 >
                   <LogIn size={16} /> Iniciar sesión
-                </a>
+                </Link>
               )}
             </div>
           </motion.div>

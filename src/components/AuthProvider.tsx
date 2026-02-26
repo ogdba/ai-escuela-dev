@@ -1,5 +1,4 @@
 "use client";
-"use client";
 
 /* eslint-disable react-hooks/set-state-in-effect */
 
@@ -50,13 +49,26 @@ const readStoredSession = (): StoredSession | null => {
   }
 };
 
+const SESSION_COOKIE = "ai-escuela-session";
+
+function setSessionCookie(active: boolean) {
+  if (typeof document === "undefined") return;
+  if (active) {
+    document.cookie = `${SESSION_COOKIE}=1; path=/; max-age=86400; SameSite=Lax`;
+  } else {
+    document.cookie = `${SESSION_COOKIE}=; path=/; max-age=0`;
+  }
+}
+
 const persistSession = (session: StoredSession | null) => {
   if (typeof window === "undefined") return;
   if (!session) {
     window.localStorage.removeItem(STORAGE_KEY);
+    setSessionCookie(false);
     return;
   }
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+  setSessionCookie(true);
 };
 
 export function useAuth() {
@@ -91,6 +103,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (typeof window === "undefined") return;
 
     const stored = readStoredSession();
+
+    // Ensure cookie matches localStorage on hydration
+    if (!hasSupabaseConfig && stored?.mode === "local") {
+      setSessionCookie(true);
+    }
 
     if (!hasSupabaseConfig) return;
 

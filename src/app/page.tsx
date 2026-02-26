@@ -7,13 +7,15 @@ import {
   Sparkles,
   BookOpen,
   FlaskConical,
+  ArrowRight,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import SectionHeader from "@/components/SectionHeader";
 import ContactForm from "@/components/ContactForm";
-import { useAuth } from "@/components/AuthProvider";
+import DemoSandbox from "@/components/DemoSandbox";
 import {
   CURRICULUM_SECTION,
   MODULES,
@@ -24,8 +26,6 @@ import {
   CTA,
   FOOTER,
 } from "@/content/es";
-import DemoSandbox from "@/components/DemoSandbox";
-import { useMemo } from "react";
 
 const fadeIn = {
   initial: { opacity: 0, y: 24 },
@@ -41,70 +41,18 @@ const levelColor: Record<string, string> = {
   amber: "text-amber-700 dark:text-amber-300",
 };
 
-interface GateOverlayProps {
-  title: string;
-  message: string;
-}
-
-function GateOverlay({ title, message }: GateOverlayProps) {
-  return (
-    <div className="pointer-events-auto absolute inset-0 flex items-center justify-center">
-      <div className="rounded-2xl border border-amber-300/60 bg-white/95 dark:bg-gray-950/95 px-6 py-5 shadow-xl shadow-amber-500/15 max-w-md text-center">
-        <p className="text-sm font-semibold text-slate-900 dark:text-white">{title}</p>
-        <p className="text-xs text-slate-600 dark:text-slate-300 mt-2">{message}</p>
-        <a
-          href="#demo"
-          className="mt-4 inline-flex items-center justify-center rounded-lg bg-amber-400 text-slate-900 font-semibold px-4 py-2 shadow-md shadow-amber-400/30 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500 transition"
-        >
-          Ir al login
-        </a>
-      </div>
-    </div>
-  );
-}
-
 export default function Home() {
-  const { status, mode } = useAuth();
-  const locked = status !== "authenticated";
-
-  const gateMessage = useMemo(
-    () =>
-      mode === "supabase"
-        ? "Inicia sesión con tu cuenta de Supabase (email/contraseña)."
-        : "Usa la cuenta demo (demo@iaskool.dev) para desbloquear el contenido.",
-    [mode],
-  );
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50/60 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 text-gray-900 dark:text-gray-50">
       <Navbar />
       <main className="flex flex-col gap-24 pb-24">
         <Hero />
 
-        {locked ? (
-          <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12">
-            <div className="rounded-2xl border border-amber-300/70 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-800 p-4 text-sm flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-              <span className="text-amber-900 dark:text-amber-200 font-medium">
-                El contenido completo está bloqueado hasta iniciar sesión.
-              </span>
-              <a
-                href="#demo"
-                className="inline-flex items-center justify-center rounded-lg bg-amber-400 text-slate-900 font-semibold px-4 py-2"
-              >
-                Iniciar sesión ahora
-              </a>
-            </div>
-          </section>
-        ) : null}
-
         <DemoSandbox />
 
-        <section id="curriculum" className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div
-            className={`bg-white/70 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-800 rounded-3xl p-10 shadow-xl shadow-violet-500/10 backdrop-blur ${
-              locked ? "opacity-40 blur-[1px] pointer-events-none" : ""
-            }`}
-          >
+        {/* Curriculum */}
+        <section id="curriculum" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white/70 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-800 rounded-3xl p-10 shadow-xl shadow-violet-500/10 backdrop-blur">
             <div className="flex items-start gap-4 mb-10">
               <GraduationCap className="text-violet-600 dark:text-violet-300" />
               <SectionHeader
@@ -140,10 +88,10 @@ export default function Home() {
               ))}
             </div>
           </div>
-          {locked ? <GateOverlay title="Currículum bloqueado" message={gateMessage} /> : null}
         </section>
 
-        <section id="modules" className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Modules */}
+        <section id="modules" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-start gap-3 mb-8">
             <BookOpen className="text-violet-600 dark:text-violet-300" />
             <SectionHeader
@@ -152,11 +100,7 @@ export default function Home() {
               subtitle="8 módulos diseñados para construir, asegurar y desplegar aplicaciones con IA."
             />
           </div>
-          <div
-            className={`grid grid-cols-1 md:grid-cols-2 gap-6 ${
-              locked ? "opacity-40 blur-[1px] pointer-events-none" : ""
-            }`}
-          >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {MODULES.map((module) => (
               <motion.div
                 key={module.id}
@@ -189,15 +133,20 @@ export default function Home() {
                 <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
                   Proyecto: {module.project}
                 </p>
+                <Link
+                  href={`/learn/module/${module.id}`}
+                  className="mt-4 inline-flex items-center gap-2 rounded-xl bg-violet-600 text-white font-semibold px-4 py-2 text-sm shadow-md shadow-violet-500/20 hover:-translate-y-0.5 transition"
+                >
+                  Tomar lección
+                  <ArrowRight size={16} />
+                </Link>
               </motion.div>
             ))}
           </div>
-          {locked ? (
-            <GateOverlay title="Módulos disponibles tras iniciar sesión" message={gateMessage} />
-          ) : null}
         </section>
 
-        <section id="labs" className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Labs */}
+        <section id="labs" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-start gap-3 mb-8">
             <FlaskConical className="text-emerald-500" />
             <SectionHeader
@@ -206,11 +155,7 @@ export default function Home() {
               subtitle="Practica con retos rápidos, experimenta y mide tus progresos."
             />
           </div>
-          <div
-            className={`grid grid-cols-1 md:grid-cols-3 gap-4 ${
-              locked ? "opacity-40 blur-[1px] pointer-events-none" : ""
-            }`}
-          >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {LABS.slice(0, 9).map((lab) => (
               <motion.div
                 key={lab.id}
@@ -234,13 +179,20 @@ export default function Home() {
                     </span>
                   ))}
                 </div>
+                <Link
+                  href={`/learn/lab/${lab.id}`}
+                  className="mt-4 inline-flex items-center gap-2 rounded-xl bg-emerald-600 text-white font-semibold px-4 py-2 text-sm shadow-md shadow-emerald-500/20 hover:-translate-y-0.5 transition"
+                >
+                  Iniciar laboratorio
+                  <ArrowRight size={16} />
+                </Link>
               </motion.div>
             ))}
           </div>
-          {locked ? <GateOverlay title="Laboratorios bloqueados" message={gateMessage} /> : null}
         </section>
 
-        <section id="security" className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Security */}
+        <section id="security" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-start gap-3 mb-8">
             <Shield className="text-amber-500" />
             <SectionHeader
@@ -249,11 +201,7 @@ export default function Home() {
               subtitle={OWASP_LLM_TOP10.description}
             />
           </div>
-          <div
-            className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${
-              locked ? "opacity-40 blur-[1px] pointer-events-none" : ""
-            }`}
-          >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {OWASP_LLM_TOP10.risks.map((risk) => (
               <motion.div
                 key={risk.id}
@@ -276,23 +224,17 @@ export default function Home() {
               </motion.div>
             ))}
           </div>
-          {locked ? (
-            <GateOverlay title="Seguridad OWASP disponible tras login" message={gateMessage} />
-          ) : null}
         </section>
 
-        <section id="pricing" className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Pricing */}
+        <section id="pricing" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow={PRICING.subtitle}
             title={PRICING.title}
             subtitle={PRICING.description}
             align="center"
           />
-          <div
-            className={`mt-10 grid grid-cols-1 md:grid-cols-3 gap-6 ${
-              locked ? "opacity-40 blur-[1px] pointer-events-none" : ""
-            }`}
-          >
+          <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
             {PRICING.plans.map((plan) => (
               <motion.div
                 key={plan.id}
@@ -353,11 +295,9 @@ export default function Home() {
               </motion.div>
             ))}
           </div>
-          {locked ? (
-            <GateOverlay title="Planes visibles al iniciar sesión" message={gateMessage} />
-          ) : null}
         </section>
 
+        {/* FAQ */}
         <section id="faq" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow={FAQ_DATA.subtitle}
@@ -384,6 +324,7 @@ export default function Home() {
           </div>
         </section>
 
+        {/* CTA */}
         <section id="cta" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-xl shadow-slate-200/60 dark:shadow-none p-10">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
@@ -399,12 +340,12 @@ export default function Home() {
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                <a
-                  href="#contact"
-                  className="inline-flex items-center justify-center rounded-xl bg-slate-900 text-white font-semibold px-6 py-3 shadow-lg shadow-slate-900/15 hover:-translate-y-0.5 transition"
+                <Link
+                  href="/login"
+                  className="inline-flex items-center justify-center rounded-xl bg-violet-600 text-white font-bold px-6 py-3 shadow-lg shadow-violet-600/30 hover:bg-violet-700 hover:-translate-y-0.5 transition"
                 >
                   {CTA.primary}
-                </a>
+                </Link>
                 <a
                   href="#curriculum"
                   className="inline-flex items-center justify-center rounded-xl border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-semibold px-6 py-3 hover:border-slate-500 dark:hover:border-slate-500 transition"
@@ -416,6 +357,7 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Contact */}
         <section id="contact" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow="Contacto"
@@ -428,9 +370,27 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="border-t border-gray-200 dark:border-gray-800 py-10">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-sm text-gray-600 dark:text-gray-300">
-          <p className="text-xs text-gray-500">{FOOTER.copyright}</p>
+      <footer className="border-t border-gray-200 dark:border-gray-800 bg-slate-50 dark:bg-gray-950 py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="text-center md:text-left">
+              <p className="font-semibold text-slate-900 dark:text-white text-sm">
+                Escuela IA para Desarrolladores
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{FOOTER.copyright}</p>
+            </div>
+            <nav className="flex items-center gap-6">
+              {FOOTER.links.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="text-sm text-slate-600 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </nav>
+          </div>
         </div>
       </footer>
     </div>

@@ -45,8 +45,8 @@ export default function Hero() {
               className="flex flex-col sm:flex-row gap-4"
             >
               <a
-                href="#demo"
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-slate-900 text-white font-semibold shadow-lg shadow-slate-900/15 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400 transition"
+                href="/login"
+                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-violet-600 text-white font-bold text-lg shadow-lg shadow-violet-600/30 hover:bg-violet-700 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400 transition"
               >
                 {HERO.cta}
                 <ArrowRight size={18} />
