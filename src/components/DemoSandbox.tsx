@@ -1,20 +1,28 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { LockKeyhole, LogIn, ShieldCheck, Sparkles, UserRound } from "lucide-react";
+import { LockKeyhole, LogIn, LogOut, ShieldCheck, Sparkles, UserRound } from "lucide-react";
 import { DEMO } from "@/content/es";
+import { useAuth } from "@/components/AuthProvider";
 
 export default function DemoSandbox() {
+  const { login, logout, user, status, mode } = useAuth();
   const [email, setEmail] = useState<string>(DEMO.credentials.email);
   const [password, setPassword] = useState<string>(DEMO.credentials.password);
-  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const [feedback, setFeedback] = useState<{ tone: "success" | "error" | "info"; text: string }>();
+  const [pending, setPending] = useState(false);
+  const formDisabled = status === "loading" || pending;
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const isValid =
-      email.trim().toLowerCase() === DEMO.credentials.email &&
-      password === DEMO.credentials.password;
-    setStatus(isValid ? "success" : "error");
+    setPending(true);
+    const result = await login(email, password);
+    if (result.ok) {
+      setFeedback({ tone: "success", text: DEMO.success });
+    } else {
+      setFeedback({ tone: "error", text: result.error || DEMO.error });
+    }
+    setPending(false);
   };
 
   return (
@@ -68,7 +76,9 @@ export default function DemoSandbox() {
               </div>
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-white/70">Acceso demo</p>
-                <p className="font-semibold text-white">Panel ficticio</p>
+                <p className="font-semibold text-white">
+                  {user ? "Sesión activa" : "Panel demo listo"}
+                </p>
               </div>
             </div>
 
@@ -84,7 +94,8 @@ export default function DemoSandbox() {
                   id="demo-email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="mt-2 w-full rounded-xl bg-white text-slate-900 px-4 py-3 border-0 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  disabled={formDisabled}
+                  className="mt-2 w-full rounded-xl bg-white text-slate-900 px-4 py-3 border-0 focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-60 disabled:cursor-not-allowed"
                   autoComplete="off"
                 />
               </div>
@@ -100,40 +111,61 @@ export default function DemoSandbox() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="mt-2 w-full rounded-xl bg-white text-slate-900 px-4 py-3 border-0 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  disabled={formDisabled}
+                  className="mt-2 w-full rounded-xl bg-white text-slate-900 px-4 py-3 border-0 focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-60 disabled:cursor-not-allowed"
                   autoComplete="off"
                 />
               </div>
               <button
                 type="submit"
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-amber-400 text-slate-900 font-semibold py-3 shadow-lg shadow-amber-500/30 hover:translate-y-[-2px] transition"
+                disabled={formDisabled}
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-amber-400 text-slate-900 font-semibold py-3 shadow-lg shadow-amber-500/30 hover:translate-y-[-2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80 transition disabled:opacity-60 disabled:pointer-events-none"
               >
-                Probar acceso
+                {formDisabled ? "Validando..." : "Iniciar sesión"}
               </button>
             </form>
 
-            {status === "success" ? (
+            {feedback ? (
               <p
-                className="rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-200 px-4 py-3 text-sm"
-                aria-live="polite"
+                className={`rounded-xl px-4 py-3 text-sm border ${
+                  feedback.tone === "success"
+                    ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-100"
+                    : feedback.tone === "error"
+                      ? "bg-rose-500/15 border-rose-500/40 text-rose-100"
+                      : "bg-white/10 border-white/30 text-white"
+                }`}
+                aria-live={feedback.tone === "error" ? "assertive" : "polite"}
               >
-                {DEMO.success}
-              </p>
-            ) : null}
-            {status === "error" ? (
-              <p
-                className="rounded-xl bg-rose-500/15 border border-rose-500/40 text-rose-100 px-4 py-3 text-sm"
-                aria-live="assertive"
-              >
-                {DEMO.error}
+                {feedback.text}
               </p>
             ) : null}
 
+            {user ? (
+              <div className="rounded-xl bg-white/10 border border-white/20 px-4 py-3 text-sm text-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div>
+                  <p className="font-semibold">Sesión: {user.email}</p>
+                  <p className="text-white/70 text-xs">
+                    Modo de autenticación: {mode === "supabase" ? "Supabase" : "Demo local"}
+                  </p>
+                </div>
+                <button
+                  onClick={logout}
+                  className="inline-flex items-center gap-2 rounded-lg bg-white text-slate-900 px-3 py-2 font-semibold shadow-sm hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70 transition"
+                >
+                  <LogOut size={16} /> Cerrar sesión
+                </button>
+              </div>
+            ) : null}
+
             <div className="text-xs text-white/70 space-y-1">
-              <p>Credenciales demo:</p>
+              <p>Credenciales demo (fallback local):</p>
               <p className="font-mono">{DEMO.credentials.email}</p>
               <p className="font-mono">{DEMO.credentials.password}</p>
-              <p className="text-white/50">Solo simulación local, sin backend de autenticación.</p>
+              <p className="text-white/60">
+                {mode === "supabase"
+                  ? "Detectamos claves Supabase: usa tu usuario real o la cuenta demo."
+                  : "Sin claves Supabase: autenticación local persistida en este navegador."}
+              </p>
             </div>
           </div>
         </div>

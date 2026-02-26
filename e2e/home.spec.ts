@@ -14,6 +14,14 @@ test.skip(!canBind, "No se permite abrir puertos en este entorno; se omite smoke
 test("homepage renders key sections", async ({ page }) => {
   await page.goto("/");
 
+  // Demo sandbox interaction
+  const demo = page.locator("#demo");
+  await expect(demo).toBeVisible();
+  await page.getByLabel(/Email/i).fill("demo@iaskool.dev");
+  await page.getByLabel(/Password/i).fill("Demo123!");
+  await page.getByRole("button", { name: /Iniciar sesión/i }).click();
+  await expect(page.getByText(/Acceso concedido/i)).toBeVisible();
+
   const sections = ["curriculum", "modules", "labs", "security", "pricing", "faq", "contact"];
   for (const id of sections) {
     const locator = page.locator(`#${id}`);
@@ -22,14 +30,6 @@ test("homepage renders key sections", async ({ page }) => {
 
   await expect(page.getByRole("heading", { name: /^Seguridad OWASP LLM Top 10$/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /^Laboratorios gamificados$/i })).toBeVisible();
-
-  // Demo sandbox interaction
-  const demo = page.locator("#demo");
-  await expect(demo).toBeVisible();
-  await page.getByLabel(/Email/i).fill("demo@iaskool.dev");
-  await page.getByLabel(/Password/i).fill("Demo123!");
-  await page.getByRole("button", { name: /Probar acceso/i }).click();
-  await expect(page.getByText(/Acceso concedido/i)).toBeVisible();
 
   // Contact submission happy path
   await page.locator("#contact").scrollIntoViewIfNeeded();

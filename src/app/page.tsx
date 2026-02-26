@@ -1,19 +1,19 @@
 "use client";
 
-import { motion } from "framer-motion";
 import {
   CheckCircle2,
   GraduationCap,
-  Rocket,
   Shield,
   Sparkles,
   BookOpen,
   FlaskConical,
 } from "lucide-react";
+import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import SectionHeader from "@/components/SectionHeader";
 import ContactForm from "@/components/ContactForm";
+import { useAuth } from "@/components/AuthProvider";
 import {
   CURRICULUM_SECTION,
   MODULES,
@@ -25,6 +25,7 @@ import {
   FOOTER,
 } from "@/content/es";
 import DemoSandbox from "@/components/DemoSandbox";
+import { useMemo } from "react";
 
 const fadeIn = {
   initial: { opacity: 0, y: 24 },
@@ -40,7 +41,40 @@ const levelColor: Record<string, string> = {
   amber: "text-amber-700 dark:text-amber-300",
 };
 
+interface GateOverlayProps {
+  title: string;
+  message: string;
+}
+
+function GateOverlay({ title, message }: GateOverlayProps) {
+  return (
+    <div className="pointer-events-auto absolute inset-0 flex items-center justify-center">
+      <div className="rounded-2xl border border-amber-300/60 bg-white/95 dark:bg-gray-950/95 px-6 py-5 shadow-xl shadow-amber-500/15 max-w-md text-center">
+        <p className="text-sm font-semibold text-slate-900 dark:text-white">{title}</p>
+        <p className="text-xs text-slate-600 dark:text-slate-300 mt-2">{message}</p>
+        <a
+          href="#demo"
+          className="mt-4 inline-flex items-center justify-center rounded-lg bg-amber-400 text-slate-900 font-semibold px-4 py-2 shadow-md shadow-amber-400/30 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500 transition"
+        >
+          Ir al login
+        </a>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
+  const { status, mode } = useAuth();
+  const locked = status !== "authenticated";
+
+  const gateMessage = useMemo(
+    () =>
+      mode === "supabase"
+        ? "Inicia sesión con tu cuenta de Supabase (email/contraseña)."
+        : "Usa la cuenta demo (demo@iaskool.dev) para desbloquear el contenido.",
+    [mode],
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50/60 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 text-gray-900 dark:text-gray-50">
       <Navbar />
@@ -49,8 +83,12 @@ export default function Home() {
 
         <DemoSandbox />
 
-        <section id="curriculum" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white/70 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-800 rounded-3xl p-10 shadow-xl shadow-violet-500/10 backdrop-blur">
+        <section id="curriculum" className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div
+            className={`bg-white/70 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-800 rounded-3xl p-10 shadow-xl shadow-violet-500/10 backdrop-blur ${
+              locked ? "opacity-40 blur-[1px] pointer-events-none" : ""
+            }`}
+          >
             <div className="flex items-start gap-4 mb-10">
               <GraduationCap className="text-violet-600 dark:text-violet-300" />
               <SectionHeader
@@ -86,9 +124,10 @@ export default function Home() {
               ))}
             </div>
           </div>
+          {locked ? <GateOverlay title="Currículum bloqueado" message={gateMessage} /> : null}
         </section>
 
-        <section id="modules" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section id="modules" className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-start gap-3 mb-8">
             <BookOpen className="text-violet-600 dark:text-violet-300" />
             <SectionHeader
@@ -97,7 +136,11 @@ export default function Home() {
               subtitle="8 módulos diseñados para construir, asegurar y desplegar aplicaciones con IA."
             />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div
+            className={`grid grid-cols-1 md:grid-cols-2 gap-6 ${
+              locked ? "opacity-40 blur-[1px] pointer-events-none" : ""
+            }`}
+          >
             {MODULES.map((module) => (
               <motion.div
                 key={module.id}
@@ -133,9 +176,12 @@ export default function Home() {
               </motion.div>
             ))}
           </div>
+          {locked ? (
+            <GateOverlay title="Módulos disponibles tras iniciar sesión" message={gateMessage} />
+          ) : null}
         </section>
 
-        <section id="labs" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section id="labs" className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-start gap-3 mb-8">
             <FlaskConical className="text-emerald-500" />
             <SectionHeader
@@ -144,7 +190,11 @@ export default function Home() {
               subtitle="Practica con retos rápidos, experimenta y mide tus progresos."
             />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div
+            className={`grid grid-cols-1 md:grid-cols-3 gap-4 ${
+              locked ? "opacity-40 blur-[1px] pointer-events-none" : ""
+            }`}
+          >
             {LABS.slice(0, 9).map((lab) => (
               <motion.div
                 key={lab.id}
@@ -171,9 +221,10 @@ export default function Home() {
               </motion.div>
             ))}
           </div>
+          {locked ? <GateOverlay title="Laboratorios bloqueados" message={gateMessage} /> : null}
         </section>
 
-        <section id="security" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section id="security" className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-start gap-3 mb-8">
             <Shield className="text-amber-500" />
             <SectionHeader
@@ -182,7 +233,11 @@ export default function Home() {
               subtitle={OWASP_LLM_TOP10.description}
             />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div
+            className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${
+              locked ? "opacity-40 blur-[1px] pointer-events-none" : ""
+            }`}
+          >
             {OWASP_LLM_TOP10.risks.map((risk) => (
               <motion.div
                 key={risk.id}
@@ -205,16 +260,23 @@ export default function Home() {
               </motion.div>
             ))}
           </div>
+          {locked ? (
+            <GateOverlay title="Seguridad OWASP disponible tras login" message={gateMessage} />
+          ) : null}
         </section>
 
-        <section id="pricing" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section id="pricing" className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader
             eyebrow={PRICING.subtitle}
             title={PRICING.title}
             subtitle={PRICING.description}
             align="center"
           />
-          <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div
+            className={`mt-10 grid grid-cols-1 md:grid-cols-3 gap-6 ${
+              locked ? "opacity-40 blur-[1px] pointer-events-none" : ""
+            }`}
+          >
             {PRICING.plans.map((plan) => (
               <motion.div
                 key={plan.id}
@@ -231,7 +293,14 @@ export default function Home() {
                 <p className="mt-2 text-3xl font-bold">
                   {plan.price}
                   {plan.period ? (
-                    <span className="text-sm text-gray-500"> {plan.period}</span>
+                    <span
+                      className={`text-sm ${
+                        plan.highlighted ? "text-white/80" : "text-gray-500 dark:text-gray-300"
+                      }`}
+                    >
+                      {" "}
+                      {plan.period}
+                    </span>
                   ) : null}
                 </p>
                 <p
@@ -257,10 +326,10 @@ export default function Home() {
                 </ul>
                 <a
                   href="#contact"
-                  className={`mt-6 inline-flex w-full items-center justify-center rounded-xl font-semibold py-3 transition hover:-translate-y-0.5 ${
+                  className={`mt-6 inline-flex w-full items-center justify-center rounded-xl font-semibold py-3 transition hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
                     plan.highlighted
-                      ? "bg-white text-slate-900 shadow-lg shadow-white/20"
-                      : "bg-slate-900 text-white"
+                      ? "bg-white text-slate-900 shadow-lg shadow-white/20 focus-visible:outline-white/70"
+                      : "bg-slate-900 text-white focus-visible:outline-slate-300"
                   }`}
                 >
                   {plan.cta}
@@ -268,6 +337,9 @@ export default function Home() {
               </motion.div>
             ))}
           </div>
+          {locked ? (
+            <GateOverlay title="Planes visibles al iniciar sesión" message={gateMessage} />
+          ) : null}
         </section>
 
         <section id="faq" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -341,26 +413,7 @@ export default function Home() {
       </main>
 
       <footer className="border-t border-gray-200 dark:border-gray-800 py-10">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4 text-sm text-gray-600 dark:text-gray-300">
-          <div className="flex flex-wrap items-center gap-3">
-            <Shield className="w-4 h-4 text-violet-500" />
-            <span>Seguridad by design • OWASP LLM Top 10</span>
-            <Rocket className="w-4 h-4 text-blue-500" />
-            <span>Listo para producción</span>
-            <Sparkles className="w-4 h-4 text-amber-500" />
-            <span>Hecho para desarrolladores</span>
-          </div>
-          <div className="flex flex-wrap items-center gap-4">
-            {FOOTER.links.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="hover:text-violet-600 dark:hover:text-violet-300"
-              >
-                {link.label}
-              </a>
-            ))}
-          </div>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-sm text-gray-600 dark:text-gray-300">
           <p className="text-xs text-gray-500">{FOOTER.copyright}</p>
         </div>
       </footer>

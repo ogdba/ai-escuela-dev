@@ -725,13 +725,13 @@ export const DEMO = {
   title: "Demo Sandbox",
   subtitle: "Prueba el panel en 2 minutos",
   description:
-    "Simula el acceso como estudiante demo y revisa cómo se verían métricas clave, tickets y progreso de módulos.",
+    "Accede con Supabase si defines las variables públicas; si no, usa el login demo local para revisar métricas, tickets y progreso.",
   credentials: {
     email: "demo@iaskool.dev",
     password: "Demo123!",
   },
   steps: [
-    "Usa las credenciales demo y entra al panel ficticio",
+    "Usa tus credenciales Supabase o las demo provistas",
     "Revisa tickets, métricas de RAG y costos",
     "Explora cómo mostramos progreso por módulo",
   ],
