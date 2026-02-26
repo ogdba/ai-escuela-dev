@@ -824,9 +824,36 @@ export const CTA = {
 
 export const FOOTER = {
   copyright: "© 2026 Escuela IA para Desarrolladores. Todos los derechos reservados.",
-  links: [
-    { label: "Privacidad", href: "#" },
-    { label: "Términos", href: "#" },
-    { label: "GitHub", href: "#" },
-  ],
 } as const;
+
+// Ruta esencial enfocada en desarrollo de software (menos clases, más profundidad)
+export const CORE_MODULE_IDS = [
+  "llm-fundamentals",
+  "prompt-engineering",
+  "rag-fundamentals",
+  "promptops-guardrails",
+  "ai-evals",
+  "observability-cost-latency",
+  "ci-cd-ai",
+  "ai-security",
+] as const;
+
+export const CORE_LAB_IDS = [
+  "lab-token-counter",
+  "lab-prompt-arena",
+  "lab-rag-eval",
+  "lab-guardrails",
+  "lab-evals-ci",
+  "lab-observability",
+  "lab-ci-cd",
+  "lab-prompt-injection",
+  "lab-output-sanitizer",
+  "lab-threat-model",
+] as const;
+
+export const ACTIVE_MODULES = MODULES.filter((m) =>
+  CORE_MODULE_IDS.includes(m.id as (typeof CORE_MODULE_IDS)[number]),
+);
+export const ACTIVE_LABS = LABS.filter((l) =>
+  CORE_LAB_IDS.includes(l.id as (typeof CORE_LAB_IDS)[number]),
+);

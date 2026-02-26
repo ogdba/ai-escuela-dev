@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { MODULES, LABS } from "@/content/es";
+import { ACTIVE_MODULES, ACTIVE_LABS } from "@/content/es";
 import Navbar from "@/components/Navbar";
 import { motion } from "framer-motion";
 import { Plus, BookOpen, FlaskConical, Settings, CheckCircle2, ArrowLeft } from "lucide-react";
@@ -105,7 +105,7 @@ export default function AdminContentPage() {
             }`}
           >
             <BookOpen size={16} />
-            Módulos ({MODULES.length})
+            Módulos ({ACTIVE_MODULES.length})
           </button>
           <button
             onClick={() => setTab("labs")}
@@ -116,7 +116,7 @@ export default function AdminContentPage() {
             }`}
           >
             <FlaskConical size={16} />
-            Labs ({LABS.length})
+            Labs ({ACTIVE_LABS.length})
           </button>
           <button
             onClick={() => {
@@ -226,7 +226,7 @@ export default function AdminContentPage() {
             </thead>
             <tbody>
               {tab === "modules"
-                ? MODULES.map((m) => (
+                ? ACTIVE_MODULES.map((m) => (
                     <tr
                       key={m.id}
                       className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
@@ -243,7 +243,7 @@ export default function AdminContentPage() {
                       </td>
                     </tr>
                   ))
-                : LABS.map((l) => (
+                : ACTIVE_LABS.map((l) => (
                     <tr
                       key={l.id}
                       className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"

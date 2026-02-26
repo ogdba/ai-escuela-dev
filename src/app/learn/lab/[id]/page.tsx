@@ -1,7 +1,8 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { LABS, MODULES } from "@/content/es";
+import { ACTIVE_LABS, ACTIVE_MODULES } from "@/content/es";
+import { LAB_DETAILS } from "@/content/lesson-details";
 import { useProgress } from "@/lib/progress";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
@@ -34,7 +35,8 @@ const difficultyColor: Record<string, string> = {
 export default function LabPage() {
   const params = useParams();
   const id = params.id as string;
-  const lab = LABS.find((l) => l.id === id);
+  const lab = ACTIVE_LABS.find((l) => l.id === id);
+  const detail = lab ? LAB_DETAILS[lab.id] : undefined;
   const { getProgress, updateProgress } = useProgress();
   const progress = getProgress("lab", id);
   const pct = progress?.percent || 0;
@@ -57,8 +59,9 @@ export default function LabPage() {
     );
   }
 
-  const relatedModule = MODULES.find((m) => m.id === lab.module);
-  const handleStart = () => updateProgress("lab", id, 10);
+  const relatedModule = ACTIVE_MODULES.find((m) => m.id === lab.module);
+  const handleStart = () => updateProgress("lab", id, Math.max(pct, 10));
+  const handleCheckpoint = () => updateProgress("lab", id, Math.min(90, Math.max(pct, 60)));
   const handleComplete = () => updateProgress("lab", id, 100);
 
   return (
@@ -109,6 +112,29 @@ export default function LabPage() {
           </div>
         </motion.div>
 
+        {detail ? (
+          <motion.section
+            {...fadeIn}
+            className="rounded-2xl border border-indigo-200 dark:border-indigo-900/40 bg-indigo-50/60 dark:bg-indigo-950/20 p-6 shadow-lg"
+          >
+            <h2 className="text-xl font-semibold mb-3">Qué vas a construir</h2>
+            <p className="text-slate-700 dark:text-slate-200 mb-3">{detail.resumen}</p>
+            <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">
+              <span className="font-semibold">Valor para tu trabajo: </span>
+              {detail.porQueImporta}
+            </p>
+            <ol className="space-y-2 list-decimal list-inside text-sm text-slate-700 dark:text-slate-200">
+              {detail.pasos.map((step) => (
+                <li key={step}>{step}</li>
+              ))}
+            </ol>
+            <p className="mt-4 text-sm text-slate-700 dark:text-slate-200">
+              <span className="font-semibold">Meta del laboratorio: </span>
+              {detail.resultadoEsperado}
+            </p>
+          </motion.section>
+        ) : null}
+
         {/* Tags */}
         <motion.section
           {...fadeIn}
@@ -154,23 +180,31 @@ export default function LabPage() {
         ) : null}
 
         {/* Actions */}
-        <motion.div {...fadeIn} className="flex gap-4">
+        <motion.div {...fadeIn} className="flex flex-wrap gap-3">
           {pct === 0 ? (
             <button
               onClick={handleStart}
-              className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 text-white font-semibold px-6 py-3 shadow-lg shadow-emerald-500/25 hover:-translate-y-0.5 transition"
+              className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 text-white font-semibold px-5 py-3 shadow-lg shadow-emerald-500/25 hover:-translate-y-0.5 transition"
             >
               <PlayCircle size={18} />
               Iniciar laboratorio
             </button>
           ) : pct < 100 ? (
-            <button
-              onClick={handleComplete}
-              className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 text-white font-semibold px-6 py-3 shadow-lg shadow-emerald-500/25 hover:-translate-y-0.5 transition"
-            >
-              <CheckCircle2 size={18} />
-              Marcar como completado
-            </button>
+            <>
+              <button
+                onClick={handleCheckpoint}
+                className="inline-flex items-center gap-2 rounded-xl bg-sky-600 text-white font-semibold px-5 py-3 shadow-lg shadow-sky-500/25 hover:-translate-y-0.5 transition"
+              >
+                Guardar avance
+              </button>
+              <button
+                onClick={handleComplete}
+                className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 text-white font-semibold px-5 py-3 shadow-lg shadow-emerald-500/25 hover:-translate-y-0.5 transition"
+              >
+                <CheckCircle2 size={18} />
+                Completar laboratorio
+              </button>
+            </>
           ) : (
             <div className="inline-flex items-center gap-2 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 font-semibold px-6 py-3 border border-emerald-200 dark:border-emerald-800">
               <Trophy size={18} />
@@ -179,7 +213,7 @@ export default function LabPage() {
           )}
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-2 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-semibold px-6 py-3 hover:border-slate-500 dark:hover:border-slate-500 transition"
+            className="inline-flex items-center gap-2 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-semibold px-5 py-3 hover:border-slate-500 dark:hover:border-slate-500 transition"
           >
             Volver al dashboard
           </Link>

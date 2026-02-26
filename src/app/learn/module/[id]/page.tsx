@@ -1,7 +1,8 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { MODULES } from "@/content/es";
+import { ACTIVE_MODULES } from "@/content/es";
+import { MODULE_DETAILS } from "@/content/lesson-details";
 import { useProgress } from "@/lib/progress";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
@@ -25,7 +26,8 @@ const fadeIn = {
 export default function ModulePage() {
   const params = useParams();
   const id = params.id as string;
-  const courseModule = MODULES.find((m) => m.id === id);
+  const courseModule = ACTIVE_MODULES.find((m) => m.id === id);
+  const detail = courseModule ? MODULE_DETAILS[courseModule.id] : undefined;
   const { getProgress, updateProgress } = useProgress();
   const progress = getProgress("module", id);
   const pct = progress?.percent || 0;
@@ -48,7 +50,8 @@ export default function ModulePage() {
     );
   }
 
-  const handleStart = () => updateProgress("module", id, 10);
+  const handleStart = () => updateProgress("module", id, Math.max(pct, 10));
+  const handleCheckpoint = () => updateProgress("module", id, Math.min(90, Math.max(pct, 60)));
   const handleComplete = () => updateProgress("module", id, 100);
 
   return (
@@ -112,6 +115,51 @@ export default function ModulePage() {
           </ul>
         </motion.section>
 
+        {detail ? (
+          <motion.section
+            {...fadeIn}
+            className="rounded-2xl border border-indigo-200 dark:border-indigo-900/40 bg-indigo-50/60 dark:bg-indigo-950/20 p-6 shadow-lg"
+          >
+            <h2 className="text-xl font-semibold mb-3">Explicación aplicada</h2>
+            <p className="text-slate-700 dark:text-slate-200 mb-3">{detail.resumen}</p>
+            <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">
+              <span className="font-semibold">Por qué importa: </span>
+              {detail.porQueImporta}
+            </p>
+            <div className="space-y-2">
+              {detail.explicacion.map((punto) => (
+                <p key={punto} className="text-sm text-slate-700 dark:text-slate-200">
+                  • {punto}
+                </p>
+              ))}
+            </div>
+          </motion.section>
+        ) : null}
+
+        {detail ? (
+          <motion.section
+            {...fadeIn}
+            className="rounded-2xl border border-sky-200 dark:border-sky-900/40 bg-sky-50/60 dark:bg-sky-950/20 p-6 shadow-lg"
+          >
+            <h2 className="text-xl font-semibold mb-4">Guía paso a paso (hands-on)</h2>
+            <ol className="space-y-2 list-decimal list-inside text-sm text-slate-700 dark:text-slate-200">
+              {detail.pasos.map((step) => (
+                <li key={step}>{step}</li>
+              ))}
+            </ol>
+            <h3 className="font-semibold mt-5 mb-2">Errores comunes</h3>
+            <ul className="space-y-1 text-sm text-slate-700 dark:text-slate-200">
+              {detail.erroresComunes.map((err) => (
+                <li key={err}>• {err}</li>
+              ))}
+            </ul>
+            <p className="mt-4 text-sm text-slate-700 dark:text-slate-200">
+              <span className="font-semibold">Resultado esperado: </span>
+              {detail.resultadoEsperado}
+            </p>
+          </motion.section>
+        ) : null}
+
         {/* Checklist */}
         <motion.section
           {...fadeIn}
@@ -148,23 +196,31 @@ export default function ModulePage() {
         </motion.section>
 
         {/* Actions */}
-        <motion.div {...fadeIn} className="flex gap-4">
+        <motion.div {...fadeIn} className="flex flex-wrap gap-3">
           {pct === 0 ? (
             <button
               onClick={handleStart}
-              className="inline-flex items-center gap-2 rounded-xl bg-violet-600 text-white font-semibold px-6 py-3 shadow-lg shadow-violet-500/25 hover:-translate-y-0.5 transition"
+              className="inline-flex items-center gap-2 rounded-xl bg-violet-600 text-white font-semibold px-5 py-3 shadow-lg shadow-violet-500/25 hover:-translate-y-0.5 transition"
             >
               <PlayCircle size={18} />
               Comenzar módulo
             </button>
           ) : pct < 100 ? (
-            <button
-              onClick={handleComplete}
-              className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 text-white font-semibold px-6 py-3 shadow-lg shadow-emerald-500/25 hover:-translate-y-0.5 transition"
-            >
-              <CheckCircle2 size={18} />
-              Marcar como completado
-            </button>
+            <>
+              <button
+                onClick={handleCheckpoint}
+                className="inline-flex items-center gap-2 rounded-xl bg-sky-600 text-white font-semibold px-5 py-3 shadow-lg shadow-sky-500/25 hover:-translate-y-0.5 transition"
+              >
+                Guardar avance
+              </button>
+              <button
+                onClick={handleComplete}
+                className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 text-white font-semibold px-5 py-3 shadow-lg shadow-emerald-500/25 hover:-translate-y-0.5 transition"
+              >
+                <CheckCircle2 size={18} />
+                Completar módulo
+              </button>
+            </>
           ) : (
             <div className="inline-flex items-center gap-2 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 font-semibold px-6 py-3 border border-emerald-200 dark:border-emerald-800">
               <Trophy size={18} />
@@ -173,7 +229,7 @@ export default function ModulePage() {
           )}
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-2 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-semibold px-6 py-3 hover:border-slate-500 dark:hover:border-slate-500 transition"
+            className="inline-flex items-center gap-2 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-semibold px-5 py-3 hover:border-slate-500 dark:hover:border-slate-500 transition"
           >
             Volver al dashboard
           </Link>

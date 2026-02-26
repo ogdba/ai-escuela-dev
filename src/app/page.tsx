@@ -18,8 +18,8 @@ import ContactForm from "@/components/ContactForm";
 import DemoSandbox from "@/components/DemoSandbox";
 import {
   CURRICULUM_SECTION,
-  MODULES,
-  LABS,
+  ACTIVE_MODULES,
+  ACTIVE_LABS,
   PRICING,
   FAQ_DATA,
   OWASP_LLM_TOP10,
@@ -101,7 +101,7 @@ export default function Home() {
             />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {MODULES.map((module) => (
+            {ACTIVE_MODULES.map((module) => (
               <motion.div
                 key={module.id}
                 {...fadeIn}
@@ -156,7 +156,7 @@ export default function Home() {
             />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {LABS.slice(0, 9).map((lab) => (
+            {ACTIVE_LABS.slice(0, 8).map((lab) => (
               <motion.div
                 key={lab.id}
                 {...fadeIn}
@@ -372,24 +372,11 @@ export default function Home() {
 
       <footer className="border-t border-gray-200 dark:border-gray-800 bg-slate-50 dark:bg-gray-950 py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="text-center md:text-left">
-              <p className="font-semibold text-slate-900 dark:text-white text-sm">
-                Escuela IA para Desarrolladores
-              </p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{FOOTER.copyright}</p>
-            </div>
-            <nav className="flex items-center gap-6">
-              {FOOTER.links.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  className="text-sm text-slate-600 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
-                >
-                  {link.label}
-                </a>
-              ))}
-            </nav>
+          <div className="text-center md:text-left">
+            <p className="font-semibold text-slate-900 dark:text-white text-sm">
+              Escuela IA para Desarrolladores
+            </p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{FOOTER.copyright}</p>
           </div>
         </div>
       </footer>

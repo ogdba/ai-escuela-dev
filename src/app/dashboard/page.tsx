@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/components/AuthProvider";
 import { useProgress } from "@/lib/progress";
-import { MODULES, LABS } from "@/content/es";
+import { ACTIVE_MODULES, ACTIVE_LABS } from "@/content/es";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import { motion } from "framer-motion";
@@ -27,12 +27,12 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const { loading, getProgress, globalPercent } = useProgress();
 
-  const modulesWithProgress = MODULES.map((m) => ({
+  const modulesWithProgress = ACTIVE_MODULES.map((m) => ({
     ...m,
     progress: getProgress("module", m.id),
   }));
 
-  const labsWithProgress = LABS.map((l) => ({
+  const labsWithProgress = ACTIVE_LABS.map((l) => ({
     ...l,
     progress: getProgress("lab", l.id),
   }));
@@ -46,7 +46,7 @@ export default function DashboardPage() {
   const labsPending = labsWithProgress.filter((l) => !l.progress || l.progress.percent < 100);
 
   const nextModule =
-    modulesInProgress[0] || modulesWithProgress.find((m) => !m.progress) || MODULES[0];
+    modulesInProgress[0] || modulesWithProgress.find((m) => !m.progress) || ACTIVE_MODULES[0];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50/60 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 text-gray-900 dark:text-gray-50">
@@ -173,7 +173,7 @@ export default function DashboardPage() {
             <h2 className="text-xl font-semibold">Labs pendientes</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {labsPending.slice(0, 9).map((lab) => (
+            {labsPending.slice(0, 8).map((lab) => (
               <motion.div key={lab.id} {...fadeIn}>
                 <Link
                   href={`/learn/lab/${lab.id}`}
