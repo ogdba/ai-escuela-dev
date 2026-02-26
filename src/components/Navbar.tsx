@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Sun, Moon } from "lucide-react";
+import { Menu, X, Sun, Moon, LogIn, LogOut } from "lucide-react";
 import { NAV, SITE } from "@/content/es";
 import { useTheme } from "./ThemeProvider";
+import { useAuth } from "./AuthProvider";
 
 const navItems = [
   { label: NAV.demo, href: "#demo" },
@@ -19,6 +20,8 @@ const navItems = [
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const { theme, toggle } = useTheme();
+  const { status, user, logout } = useAuth();
+  const isAuthed = status === "authenticated";
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-950/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
@@ -39,6 +42,21 @@ export default function Navbar() {
                 {item.label}
               </a>
             ))}
+            {isAuthed ? (
+              <button
+                onClick={logout}
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition-colors"
+              >
+                <LogOut size={16} /> Salir
+              </button>
+            ) : (
+              <a
+                href="#demo"
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-400 text-slate-900 text-sm font-semibold hover:bg-amber-300 transition-colors"
+              >
+                <LogIn size={16} /> Iniciar sesión
+              </a>
+            )}
             <button
               onClick={toggle}
               className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
@@ -88,6 +106,25 @@ export default function Navbar() {
                   {item.label}
                 </a>
               ))}
+              {isAuthed ? (
+                <button
+                  onClick={() => {
+                    logout();
+                    setOpen(false);
+                  }}
+                  className="mt-3 w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-slate-900 text-white text-sm font-semibold"
+                >
+                  <LogOut size={16} /> Cerrar sesión ({user?.email})
+                </button>
+              ) : (
+                <a
+                  href="#demo"
+                  onClick={() => setOpen(false)}
+                  className="mt-3 w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-amber-400 text-slate-900 text-sm font-semibold"
+                >
+                  <LogIn size={16} /> Iniciar sesión
+                </a>
+              )}
             </div>
           </motion.div>
         )}

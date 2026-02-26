@@ -818,7 +818,7 @@ export const CTA = {
   title: "Construye apps con IA seguras y en producción",
   description:
     "Únete a la cohorte y aprende con proyectos reales, laboratorios gamificados y mentoría en vivo.",
-  primary: "Aplicar ahora",
+  primary: "Inscríbete ahora",
   secondary: "Ver plan de estudios",
 } as const;
 

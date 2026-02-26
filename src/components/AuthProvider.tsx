@@ -131,6 +131,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     const normalizedEmail = email.trim().toLowerCase();
+    const matchesDemo =
+      normalizedEmail === DEMO.credentials.email && password === DEMO.credentials.password;
 
     if (hasSupabaseConfig && supabaseAuthEndpoint && supabaseAnonKey) {
       setStatus("loading");
@@ -144,54 +146,51 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           body: JSON.stringify({ email: normalizedEmail, password }),
         });
 
-        if (!res.ok) {
-          const payload = (await res.json().catch(() => ({}))) as {
-            error_description?: string;
-            error?: string;
+        if (res.ok) {
+          const data = (await res.json()) as {
+            access_token?: string;
+            refresh_token?: string;
+            user?: { email?: string };
           };
-          setStatus("error");
-          return {
-            ok: false,
-            error: payload.error_description || payload.error || "No se pudo iniciar sesión",
+
+          const accessToken = data.access_token;
+          if (!accessToken) {
+            setStatus("error");
+            return { ok: false, error: "Respuesta de Supabase sin token" };
+          }
+
+          const sessionPayload: StoredSession = {
+            mode: "supabase",
+            email: data.user?.email || normalizedEmail,
+            accessToken,
+            refreshToken: data.refresh_token,
           };
+
+          persistSession(sessionPayload);
+          setSession(sessionPayload);
+          setUser({ email: sessionPayload.email });
+          setStatus("authenticated");
+          return { ok: true };
         }
+      } catch {
+        // fallback handled below
+      }
 
-        const data = (await res.json()) as {
-          access_token?: string;
-          refresh_token?: string;
-          user?: { email?: string };
-        };
-
-        const accessToken = data.access_token;
-        if (!accessToken) {
-          setStatus("error");
-          return { ok: false, error: "Respuesta de Supabase sin token" };
-        }
-
-        const sessionPayload: StoredSession = {
-          mode: "supabase",
-          email: data.user?.email || normalizedEmail,
-          accessToken,
-          refreshToken: data.refresh_token,
-        };
-
-        persistSession(sessionPayload);
-        setSession(sessionPayload);
-        setUser({ email: sessionPayload.email });
+      if (matchesDemo) {
+        const demoSession: StoredSession = { mode: "local", email: DEMO.credentials.email };
+        persistSession(demoSession);
+        setSession(demoSession);
+        setUser({ email: DEMO.credentials.email });
         setStatus("authenticated");
         return { ok: true };
-      } catch {
-        setStatus("error");
-        return {
-          ok: false,
-          error: "No pudimos contactar Supabase. Verifica tu conexión o claves.",
-        };
       }
-    }
 
-    // Local fallback demo auth
-    const matchesDemo =
-      normalizedEmail === DEMO.credentials.email && password === DEMO.credentials.password;
+      setStatus("error");
+      return {
+        ok: false,
+        error: "No se pudo iniciar sesión en Supabase. Verifica credenciales o usa la cuenta demo.",
+      };
+    }
 
     if (matchesDemo) {
       const demoSession: StoredSession = { mode: "local", email: DEMO.credentials.email };

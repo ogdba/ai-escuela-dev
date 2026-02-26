@@ -81,6 +81,22 @@ export default function Home() {
       <main className="flex flex-col gap-24 pb-24">
         <Hero />
 
+        {locked ? (
+          <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12">
+            <div className="rounded-2xl border border-amber-300/70 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-800 p-4 text-sm flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+              <span className="text-amber-900 dark:text-amber-200 font-medium">
+                El contenido completo está bloqueado hasta iniciar sesión.
+              </span>
+              <a
+                href="#demo"
+                className="inline-flex items-center justify-center rounded-lg bg-amber-400 text-slate-900 font-semibold px-4 py-2"
+              >
+                Iniciar sesión ahora
+              </a>
+            </div>
+          </section>
+        ) : null}
+
         <DemoSandbox />
 
         <section id="curriculum" className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
