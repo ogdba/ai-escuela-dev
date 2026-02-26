@@ -13,6 +13,7 @@ export const SITE = {
 
 export const NAV = {
   home: "Inicio",
+  demo: "Demo",
   curriculum: "Currículum",
   modules: "Módulos",
   labs: "Laboratorios",
@@ -30,8 +31,8 @@ export const HERO = {
   cta: "Inscríbete ahora",
   ctaSecondary: "Explorar módulos",
   stats: [
-    { value: "8", label: "Módulos" },
-    { value: "40+", label: "Laboratorios" },
+    { value: "13", label: "Módulos" },
+    { value: "50+", label: "Laboratorios" },
     { value: "100%", label: "Práctico" },
     { value: "ES", label: "En español" },
   ],
@@ -51,17 +52,22 @@ export const CURRICULUM_SECTION = {
     {
       name: "Intermedio",
       color: "blue",
-      modules: ["Herramientas para Desarrolladores", "Protocolo MCP y Agentes"],
+      modules: ["RAG Fundamentals", "PromptOps & Guardrails", "Evals y testing"],
     },
     {
       name: "Avanzado",
       color: "purple",
-      modules: ["Seguridad IA (OWASP)", "Modelos Locales", "Despliegue y Producción"],
+      modules: ["Observabilidad y costos", "CI/CD para IA", "MCP seguro", "Agentes para devs"],
     },
     {
       name: "Experto",
       color: "amber",
-      modules: ["Proyecto Final Integrador"],
+      modules: [
+        "Seguridad IA (OWASP)",
+        "Modelos Locales",
+        "Despliegue y Producción",
+        "Proyecto Final",
+      ],
     },
   ],
 } as const;
@@ -125,54 +131,175 @@ export const MODULES: Module[] = [
     icon: "MessageSquare",
   },
   {
-    id: "dev-tools",
+    id: "rag-fundamentals",
     number: 3,
-    title: "Herramientas para Desarrolladores",
+    title: "RAG Fundamentals & Retrieval Quality",
     description:
-      "Conoce y domina las herramientas de IA que potencian tu flujo de trabajo como desarrollador: asistentes en el IDE, agentes de terminal y más.",
+      "Diseña pipelines RAG robustos: chunking, embeddings, stores vectoriales e índices híbridos para precisión y recall altos.",
     topics: [
-      "VS Code + GitHub Copilot",
-      "Cursor IDE: flujo agéntico",
-      "Claude Code: agente de terminal",
-      "OpenCode y alternativas open-source",
-      "NotebookLM para investigación",
-      "Comparativa y cuándo usar cada herramienta",
+      "Estrategias de chunking y ventanas deslizantes",
+      "Embeddings y elección de distancia",
+      "Vector stores vs índices híbridos (BM25 + vectores)",
+      "Calidad de recuperación: precisión, recall y MRR",
+      "Re-ranking y context filters",
+      "Guardrails previos a la generación",
     ],
-    project: "Configurar un entorno de desarrollo completo con IA integrada",
+    project:
+      "Evaluar un pipeline RAG con dataset de soporte y reportar recall@k y precisión contextual",
     checklist: [
-      "Tengo configurado al menos un asistente IA en mi IDE",
-      "Puedo usar Claude Code para tareas complejas",
-      "Entiendo las diferencias entre herramientas",
-      "Sé cuándo usar cada herramienta según el caso",
+      "Puedo elegir un esquema de chunking adecuado",
+      "Sé medir calidad de recuperación con métricas objetivas",
+      "Configuro re-ranking para mejorar precisión",
+      "Implemento filtros de contexto antes de enviar al LLM",
+    ],
+    icon: "BookOpen",
+  },
+  {
+    id: "promptops-guardrails",
+    number: 4,
+    title: "PromptOps y Guardrails",
+    description:
+      "Opera prompts como producto: versionado, plantillas, políticas y guardrails para seguridad y consistencia.",
+    topics: [
+      "Versionado de prompts y plantillas parametrizadas",
+      "Políticas y allowlists/denylists",
+      "Validación de salida basada en esquemas",
+      "Filtros de toxicidad y PII",
+      "Circuit breakers y fallback prompts",
+      "Playbooks de contención ante drift",
+    ],
+    project:
+      "Implementar guardrails de esquema + filtros PII en una API de chatbot con fallback automático",
+    checklist: [
+      "Puedo versionar prompts sin romper integraciones",
+      "Validé salidas contra un esquema y manejo errores",
+      "Implementé filtros de seguridad antes y después del modelo",
+      "Tengo un plan de rollback/fallback documentado",
+    ],
+    icon: "Shield",
+  },
+  {
+    id: "ai-evals",
+    number: 5,
+    title: "AI Evals & Testing Harnesses",
+    description:
+      "Construye un pipeline de evaluación automática para prompts, agentes y RAG usando datasets de oro y métricas trazables.",
+    topics: [
+      "Evals automáticas vs humanas",
+      "Golden sets, labeled pairs y synthetic data",
+      "Métricas: exact match, faithfulness, toxicity, coherence",
+      "Harness de pruebas con fixtures y seeds",
+      "Regresiones de modelo y gates de despliegue",
+      "Visualización de resultados y dashboards",
+    ],
+    project:
+      "Crear un harness de eval con Vitest/Playwright que bloquee despliegues si bajan métricas clave",
+    checklist: [
+      "Tengo golden sets versionados",
+      "Puedo correr evals en CI con seeds reproducibles",
+      "Definí umbrales y gates para despliegue",
+      "Genero reportes de evals con tendencias",
+    ],
+    icon: "FlaskConical",
+  },
+  {
+    id: "observability-cost-latency",
+    number: 6,
+    title: "Observabilidad, Costos y Latencia",
+    description:
+      "Instrumenta tus features de IA con trazas, métricas y presupuestos claros de costo/latencia para operar en producción.",
+    topics: [
+      "Trazas distribuidas y atributos LLM",
+      "Cálculo de costos por ruta y usuario",
+      "Presupuestos de latencia y P50/P95",
+      "Caching y memoización selectiva",
+      "Rate limiting y cuotas por organización",
+      "Alertas y dashboards operativos",
+    ],
+    project: "Montar un dashboard de costo/latencia con alertas y caching dinámico por endpoint",
+    checklist: [
+      "Tengo métricas P50/P95 por feature",
+      "Sé cuánto cuesta cada flujo por usuario",
+      "Implementé caching donde no afecta precisión",
+      "Alertas de degradación disparan runbooks",
+    ],
+    icon: "Rocket",
+  },
+  {
+    id: "ci-cd-ai",
+    number: 7,
+    title: "CI/CD para Features de IA",
+    description:
+      "Integra evals, seguridad y control de versiones de modelos en pipelines de CI/CD con despliegues graduales.",
+    topics: [
+      "Versionado de modelos y prompts",
+      "Contracts de API y schemas",
+      "Canary/blue-green para modelos",
+      "Pruebas automáticas de regresión semántica",
+      "Feature flags y toggles de modelo",
+      "SBOM y supply-chain para IA",
+    ],
+    project:
+      "Crear un pipeline CI/CD que corra evals, chequee seguridad y haga canary de prompts/modelos",
+    checklist: [
+      "Mis pipelines bloquean si fallan evals",
+      "Uso feature flags para alternar modelos",
+      "Tengo contratos de entrada/salida versionados",
+      "Incluyo SBOM y auditoría en CI",
     ],
     icon: "Wrench",
   },
   {
-    id: "mcp-agents",
-    number: 4,
-    title: "Protocolo MCP y Agentes",
+    id: "mcp-integrations",
+    number: 8,
+    title: "MCP Tooling Strategy y Integraciones Seguras",
     description:
-      "Comprende el Model Context Protocol, el desarrollo agéntico con bucles autónomos, y la diferencia entre MCP y Agent Skills.",
+      "Profundiza en Model Context Protocol para exponer herramientas y recursos seguros a agentes y copilotos.",
     topics: [
-      "¿Qué es MCP (Model Context Protocol)?",
-      "MCP vs Agent Skills: cuándo usar cada uno",
-      "Bucles agénticos y autonomía controlada",
-      "Herramientas (tools) y recursos (resources)",
-      "Servidores MCP: construcción e integración",
-      "Patrones de orquestación multi-agente",
+      "Diseño de servidores MCP",
+      "Tools vs resources: permisos y scopes",
+      "Autenticación y autorización en MCP",
+      "Observabilidad y trazabilidad por tool",
+      "Patrones de aislamiento y sandboxing",
+      "Integración con stacks existentes (DB, repos, tickets)",
     ],
-    project: "Construir un servidor MCP funcional con herramientas personalizadas",
+    project:
+      "Construir un servidor MCP con RBAC para consultar repos y crear tickets con trazas completas",
     checklist: [
-      "Puedo explicar qué es MCP y su propósito",
-      "Entiendo la diferencia entre tools y resources",
-      "Puedo construir un servidor MCP básico",
-      "Sé diseñar un flujo agéntico con guardrails",
+      "Definí scopes mínimos por tool",
+      "Logueo y audito cada invocación",
+      "Integro MCP con sistemas existentes",
+      "Tengo pruebas de seguridad sobre tools sensibles",
     ],
     icon: "Network",
   },
   {
+    id: "agent-architectures",
+    number: 9,
+    title: "Patrones de Arquitectura de Agentes",
+    description:
+      "Patrones prácticos para agentes en equipos de software: planeación, ejecución con verificación y handoffs humanos.",
+    topics: [
+      "ReAct, Plan-Execute-Verify y Control Loops",
+      "Agentes especializados vs orquestadores",
+      "Memoria a corto y largo plazo",
+      "Integración con herramientas de desarrollo (Git, CI, issues)",
+      "Detección de alucinaciones y self-checks",
+      "Limitación de acciones y aprobaciones",
+    ],
+    project:
+      "Implementar un agente de soporte a devs que crea issues, propone PRs y pide aprobación humana",
+    checklist: [
+      "Separé orquestador de agentes expertos",
+      "Implementé self-check y límites de pasos",
+      "Integro con Git/CI de forma segura",
+      "Definí handoffs humanos claros",
+    ],
+    icon: "UserRound",
+  },
+  {
     id: "ai-security",
-    number: 5,
+    number: 10,
     title: "Seguridad IA — OWASP LLM Top 10",
     description:
       "Aprende a proteger tus aplicaciones de IA contra las vulnerabilidades más críticas definidas por OWASP. Incluye patrones defensivos prácticos.",
@@ -186,11 +313,12 @@ export const MODULES: Module[] = [
       "LLM07: Diseño inseguro de plugins",
       "LLM08: Agencia excesiva",
       "LLM09: Sobre-dependencia",
-      "LLM10: Robo de modelos",
+      "LLM10: Robo de modelo",
       "Patrones defensivos: rails, validación, sandboxing",
       "Threat modeling para aplicaciones con LLM",
     ],
-    project: "Auditoría de seguridad completa de una aplicación con LLM integrado",
+    project:
+      "Auditoría de seguridad completa de una aplicación con LLM integrado y plan de mitigación",
     checklist: [
       "Puedo identificar los 10 riesgos de OWASP LLM",
       "Sé implementar defensas contra prompt injection",
@@ -201,7 +329,7 @@ export const MODULES: Module[] = [
   },
   {
     id: "local-models",
-    number: 6,
+    number: 11,
     title: "Modelos Locales",
     description:
       "Ejecuta modelos de IA en tu propia máquina. Aprende sobre Ollama, cuantización, y cuándo usar modelos locales vs APIs en la nube.",
@@ -213,7 +341,8 @@ export const MODULES: Module[] = [
       "Integración con herramientas de desarrollo",
       "Privacidad y compliance con modelos locales",
     ],
-    project: "Configurar un pipeline de desarrollo completo con modelos locales",
+    project:
+      "Configurar un pipeline de desarrollo completo con modelos locales y fallback a la nube",
     checklist: [
       "Tengo Ollama instalado y funcionando",
       "Puedo ejecutar modelos cuantizados",
@@ -224,7 +353,7 @@ export const MODULES: Module[] = [
   },
   {
     id: "deployment",
-    number: 7,
+    number: 12,
     title: "Despliegue y Producción",
     description:
       "Lleva tus aplicaciones con IA a producción. Aprende sobre observabilidad, gestión de costos, caching, rate limiting y mejores prácticas.",
@@ -247,7 +376,7 @@ export const MODULES: Module[] = [
   },
   {
     id: "final-project",
-    number: 8,
+    number: 13,
     title: "Proyecto Final Integrador",
     description:
       "Aplica todo lo aprendido en un proyecto real que integra LLMs, agentes, seguridad y despliegue. Presenta tu solución ante la comunidad.",
@@ -401,6 +530,76 @@ export const LABS: Lab[] = [
     module: "final-project",
     tags: ["full-stack", "integración", "proyecto"],
   },
+  {
+    id: "lab-rag-eval",
+    title: "📚 RAG Quality Bench",
+    description:
+      "Implementa métricas de recall@k y precisión contextual sobre un dataset de soporte usando tu pipeline RAG.",
+    difficulty: "medio",
+    duration: "60 min",
+    module: "rag-fundamentals",
+    tags: ["RAG", "evaluación", "retrieval"],
+  },
+  {
+    id: "lab-guardrails",
+    title: "🧱 Guardrails en vivo",
+    description:
+      "Añade validación de esquema y filtrado PII a un endpoint de chat, con fallback automático y logging.",
+    difficulty: "medio",
+    duration: "50 min",
+    module: "promptops-guardrails",
+    tags: ["guardrails", "seguridad", "schemas"],
+  },
+  {
+    id: "lab-evals-ci",
+    title: "🧪 Harness de Evals en CI",
+    description:
+      "Crea un harness Vitest/Playwright que ejecuta evals y falla el build si cae el puntaje de calidad.",
+    difficulty: "difícil",
+    duration: "70 min",
+    module: "ai-evals",
+    tags: ["evals", "testing", "ci"],
+  },
+  {
+    id: "lab-observability",
+    title: "📈 Dashboard de Latencia y Costo",
+    description:
+      "Instrumenta trazas y métricas para calcular costo por request y tiempos P50/P95 con alertas básicas.",
+    difficulty: "medio",
+    duration: "55 min",
+    module: "observability-cost-latency",
+    tags: ["observabilidad", "costo", "latencia"],
+  },
+  {
+    id: "lab-ci-cd",
+    title: "🔁 Pipeline IA con gates",
+    description:
+      "Configura un pipeline con feature flags, canary de prompts y rollback automático si fallan las evals.",
+    difficulty: "difícil",
+    duration: "80 min",
+    module: "ci-cd-ai",
+    tags: ["ci/cd", "prompts", "deploy"],
+  },
+  {
+    id: "lab-mcp-secure",
+    title: "🔒 MCP con RBAC",
+    description:
+      "Construye un servidor MCP que expone tools de Git y Tickets con scopes y auditoría de cada llamada.",
+    difficulty: "difícil",
+    duration: "90 min",
+    module: "mcp-integrations",
+    tags: ["mcp", "seguridad", "rbac"],
+  },
+  {
+    id: "lab-agent-patterns",
+    title: "🤝 Agente DevOps",
+    description:
+      "Crea un agente que planifica, ejecuta y solicita aprobación humana antes de acciones sensibles en CI.",
+    difficulty: "difícil",
+    duration: "100 min",
+    module: "agent-architectures",
+    tags: ["agentes", "devops", "guardrails"],
+  },
 ];
 
 export const PRICING = {
@@ -495,18 +694,54 @@ export const CONTACT = {
   title: "¿Listo para empezar?",
   subtitle: "Contáctanos",
   description: "Déjanos tus datos y te enviaremos información sobre las próximas cohortes.",
+  highlights: [
+    "Respuesta humana en menos de 24h",
+    "Plan para equipos de ingeniería",
+    "Casos reales y playbooks reutilizables",
+    "Sin spam: solo follow-up relevante",
+  ],
+  dataNotice:
+    "Guardamos tu solicitud localmente en desarrollo; en producción se envía a un datastore seguro.",
   form: {
     name: "Nombre completo",
     email: "Correo electrónico",
     message: "Mensaje (opcional)",
-    submit: "Enviar",
-    success: "¡Gracias! Te contactaremos pronto.",
+    placeholder: "Contexto de tu equipo, retos o timeline deseado",
+    submit: "Enviar consulta",
+    submitting: "Enviando...",
+    success: "¡Gracias! Ticket generado: {{id}}",
+    errorFallback: "No pudimos enviar tu solicitud. Intenta de nuevo.",
     errors: {
       nameRequired: "El nombre es obligatorio",
+      nameShort: "El nombre debe tener al menos 2 caracteres",
       emailRequired: "El correo es obligatorio",
       emailInvalid: "Ingresa un correo válido",
+      messageShort: "El mensaje debe tener al menos 10 caracteres",
     },
   },
+} as const;
+
+export const DEMO = {
+  title: "Demo Sandbox",
+  subtitle: "Prueba el panel en 2 minutos",
+  description:
+    "Simula el acceso como estudiante demo y revisa cómo se verían métricas clave, tickets y progreso de módulos.",
+  credentials: {
+    email: "demo@iaskool.dev",
+    password: "Demo123!",
+  },
+  steps: [
+    "Usa las credenciales demo y entra al panel ficticio",
+    "Revisa tickets, métricas de RAG y costos",
+    "Explora cómo mostramos progreso por módulo",
+  ],
+  quickStats: [
+    { label: "Tareas resueltas", value: "24/30" },
+    { label: "Puntaje de evals", value: "92%" },
+    { label: "Costo semanal", value: "$3.40" },
+  ],
+  success: "Acceso concedido: sesión Demo activa.",
+  error: "Credenciales inválidas. Usa el usuario demo provisto.",
 } as const;
 
 export const OWASP_LLM_TOP10 = {

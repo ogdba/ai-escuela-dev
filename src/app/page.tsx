@@ -24,6 +24,7 @@ import {
   CTA,
   FOOTER,
 } from "@/content/es";
+import DemoSandbox from "@/components/DemoSandbox";
 
 const fadeIn = {
   initial: { opacity: 0, y: 24 },
@@ -45,6 +46,8 @@ export default function Home() {
       <Navbar />
       <main className="flex flex-col gap-24 pb-24">
         <Hero />
+
+        <DemoSandbox />
 
         <section id="curriculum" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white/70 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-800 rounded-3xl p-10 shadow-xl shadow-violet-500/10 backdrop-blur">
@@ -142,7 +145,7 @@ export default function Home() {
             />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {LABS.slice(0, 6).map((lab) => (
+            {LABS.slice(0, 9).map((lab) => (
               <motion.div
                 key={lab.id}
                 {...fadeIn}
@@ -218,29 +221,47 @@ export default function Home() {
                 {...fadeIn}
                 className={`rounded-3xl border p-8 backdrop-blur shadow-lg ${
                   plan.highlighted
-                    ? "border-violet-400 bg-gradient-to-b from-violet-600/10 to-blue-600/5 dark:from-violet-500/20 dark:to-blue-500/10"
+                    ? "border-slate-900 bg-slate-900 text-white"
                     : "border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/60"
                 }`}
               >
-                <h3 className="text-xl font-semibold">{plan.name}</h3>
+                <h3 className={`text-xl font-semibold ${plan.highlighted ? "text-white" : ""}`}>
+                  {plan.name}
+                </h3>
                 <p className="mt-2 text-3xl font-bold">
                   {plan.price}
                   {plan.period ? (
                     <span className="text-sm text-gray-500"> {plan.period}</span>
                   ) : null}
                 </p>
-                <p className="mt-3 text-sm text-gray-600 dark:text-gray-300">{plan.description}</p>
-                <ul className="mt-5 space-y-2 text-sm text-gray-700 dark:text-gray-200">
+                <p
+                  className={`mt-3 text-sm ${
+                    plan.highlighted ? "text-white/80" : "text-gray-600 dark:text-gray-300"
+                  }`}
+                >
+                  {plan.description}
+                </p>
+                <ul
+                  className={`mt-5 space-y-2 text-sm ${
+                    plan.highlighted ? "text-white" : "text-gray-700 dark:text-gray-200"
+                  }`}
+                >
                   {plan.features.map((feature) => (
                     <li key={feature} className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-violet-500" />
+                      <CheckCircle2
+                        className={`w-4 h-4 ${plan.highlighted ? "text-amber-300" : "text-violet-500"}`}
+                      />
                       {feature}
                     </li>
                   ))}
                 </ul>
                 <a
                   href="#contact"
-                  className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 text-white font-semibold py-3 transition hover:opacity-95"
+                  className={`mt-6 inline-flex w-full items-center justify-center rounded-xl font-semibold py-3 transition hover:-translate-y-0.5 ${
+                    plan.highlighted
+                      ? "bg-white text-slate-900 shadow-lg shadow-white/20"
+                      : "bg-slate-900 text-white"
+                  }`}
                 >
                   {plan.cta}
                 </a>
@@ -276,25 +297,29 @@ export default function Home() {
         </section>
 
         <section id="cta" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="rounded-3xl border border-violet-200 dark:border-violet-800 bg-gradient-to-r from-violet-600 via-blue-600 to-cyan-500 text-white p-10 shadow-2xl shadow-violet-500/30">
+          <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-xl shadow-slate-200/60 dark:shadow-none p-10">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-              <div>
-                <p className="text-sm uppercase tracking-wide font-semibold text-white/80">
+              <div className="space-y-2">
+                <p className="text-sm uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
                   {CTA.secondary}
                 </p>
-                <h3 className="text-3xl md:text-4xl font-bold mt-2">{CTA.title}</h3>
-                <p className="mt-3 text-white/80 max-w-2xl">{CTA.description}</p>
+                <h3 className="font-display text-3xl md:text-4xl font-semibold text-slate-900 dark:text-white">
+                  {CTA.title}
+                </h3>
+                <p className="mt-1 text-slate-600 dark:text-slate-300 max-w-2xl">
+                  {CTA.description}
+                </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
                 <a
                   href="#contact"
-                  className="inline-flex items-center justify-center rounded-xl bg-white text-violet-700 font-semibold px-6 py-3 shadow-lg shadow-violet-500/25"
+                  className="inline-flex items-center justify-center rounded-xl bg-slate-900 text-white font-semibold px-6 py-3 shadow-lg shadow-slate-900/15 hover:-translate-y-0.5 transition"
                 >
                   {CTA.primary}
                 </a>
                 <a
                   href="#curriculum"
-                  className="inline-flex items-center justify-center rounded-xl border border-white/60 text-white font-semibold px-6 py-3 hover:bg-white/10"
+                  className="inline-flex items-center justify-center rounded-xl border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-semibold px-6 py-3 hover:border-slate-500 dark:hover:border-slate-500 transition"
                 >
                   {CTA.secondary}
                 </a>

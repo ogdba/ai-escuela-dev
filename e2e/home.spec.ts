@@ -22,4 +22,20 @@ test("homepage renders key sections", async ({ page }) => {
 
   await expect(page.getByRole("heading", { name: /^Seguridad OWASP LLM Top 10$/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /^Laboratorios gamificados$/i })).toBeVisible();
+
+  // Demo sandbox interaction
+  const demo = page.locator("#demo");
+  await expect(demo).toBeVisible();
+  await page.getByLabel(/Email/i).fill("demo@iaskool.dev");
+  await page.getByLabel(/Password/i).fill("Demo123!");
+  await page.getByRole("button", { name: /Probar acceso/i }).click();
+  await expect(page.getByText(/Acceso concedido/i)).toBeVisible();
+
+  // Contact submission happy path
+  await page.locator("#contact").scrollIntoViewIfNeeded();
+  await page.getByLabel(/Nombre completo/i).fill("Playwright Tester");
+  await page.getByLabel(/Correo electrónico/i).fill("tester@example.com");
+  await page.getByLabel(/Mensaje/i).fill("Quiero más detalles sobre el bootcamp con IA.");
+  await page.getByRole("button", { name: /Enviar consulta/i }).click();
+  await expect(page.getByText(/Ticket generado/i)).toBeVisible({ timeout: 5000 });
 });

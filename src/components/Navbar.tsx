@@ -7,6 +7,7 @@ import { NAV, SITE } from "@/content/es";
 import { useTheme } from "./ThemeProvider";
 
 const navItems = [
+  { label: NAV.demo, href: "#demo" },
   { label: NAV.curriculum, href: "#curriculum" },
   { label: NAV.modules, href: "#modules" },
   { label: NAV.labs, href: "#labs" },

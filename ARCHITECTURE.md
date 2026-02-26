@@ -2,33 +2,40 @@ Escuela IA para Desarrolladores — Arquitectura
 
 ## Capas principales
 
-- **App Router (Next.js 16)**: `src/app/page.tsx` compone toda la landing con secciones reutilizables y anclas para navegación. Layout en `src/app/layout.tsx` aplica fuentes Geist, metadatos y theming global.
+- **App Router (Next.js 16)**: `src/app/page.tsx` compone la landing y nuevas secciones (Demo Sandbox, currículum, labs, pricing, FAQ, contacto).
+- **API Route**: `src/app/api/contact/route.ts` recibe el formulario de contacto, valida datos y almacena cada envío en `data/contact-submissions.jsonl` (solo persistente en desarrollo; en serverless es efímero).
 - **Componentes**:
-  - `Navbar` (anclajes y selector de tema),
-  - `Hero` (hero animado),
+  - `Navbar` (anclajes + selector de tema),
+  - `Hero` (hero modernizado con nueva tipografía),
+  - `DemoSandbox` (mock login con credenciales demo),
   - `SectionHeader` (encabezado reutilizable),
-  - `ContactForm` (validación cliente),
+  - `ContactForm` (validación cliente + envío a API),
   - `ThemeProvider` (modo claro/oscuro persistente).
-- **Contenido i18n**: `src/content/es.ts` concentra textos, planes, labs, OWASP LLM Top 10 y CTA. Los componentes leen directamente de estas constantes para facilitar traducción futura.
-- **Utilidades**: `src/lib/utils.ts` (`cn`) y `src/lib/validators.ts` (validación de formulario y helpers).
+- **Contenido i18n**: `src/content/es.ts` concentra textos, módulos ampliados, labs, CTA, y credenciales demo.
+- **Utilidades**: `src/lib/utils.ts` (`cn`), `src/lib/validators.ts` (validación robusta), `src/lib/contact.ts` (normalización, ticket ID, persistencia).
 
 ## Estilo y UX
 
-- **Tailwind v4** (inline preset) para tokens de diseño, con gradientes de fondo globales en `src/app/globals.css`.
-- **Framer Motion** para animaciones suaves en secciones clave.
-- **Lucide** para iconografía ligera.
+- **Tipografía**: Manrope (body) + Space Grotesk (display) via `next/font`.
+- **Diseño**: tarjetas limpias, jerarquía clara, paleta sobria (slate/amber), animaciones suaves con Framer Motion.
+- **Accesibilidad**: contraste reforzado, botones con estados disabled, mensajes de éxito/error con `aria-live`.
 
 ## Routing y navegación
 
-- Navegación in-page mediante anclas (`#curriculum`, `#modules`, `#labs`, `#security`, `#pricing`, `#faq`, `#cta`, `#contact`).
-- `Navbar` fijo con `backdrop-blur`; `Hero` incluye padding superior para compensar la barra.
+- Anclas: `#demo`, `#curriculum`, `#modules`, `#labs`, `#security`, `#pricing`, `#faq`, `#cta`, `#contact`.
+- `Navbar` fijo con `backdrop-blur`; `Hero` compensa el offset.
+
+## Datos y almacenamiento
+
+- Envíos de contacto se guardan en `data/contact-submissions.jsonl` en desarrollo; en producción se requiere datastore duradero (DB/queue/obj storage).
+- Ticket IDs se generan con prefijo `TCK-xxxxxxx`.
 
 ## Tests
 
-- **Unit (Vitest + RTL)**: pruebas para utilidades, validadores y `SectionHeader` en `tests/`.
-- **E2E (Playwright)**: `e2e/home.spec.ts` valida renderizado y visibilidad de secciones clave.
+- **Unit (Vitest + RTL)**: utilidades, validadores y helpers de contacto (`tests/`).
+- **E2E (Playwright)**: `e2e/home.spec.ts` valida secciones, login demo y envío del formulario.
 
 ## Build y seguridad
 
-- `npm run build` ejecuta `next build`.
-- Seguridad: scripts `security`, `security:semgrep`, `security:audit`; sección OWASP LLM Top 10 en UI y controles reflejados en `SECURITY.md`.
+- `npm run build` ejecuta `next build --webpack`.
+- Seguridad: scripts `security`, `security:semgrep`, `security:audit`; threat model actualizado en `SECURITY.md`.

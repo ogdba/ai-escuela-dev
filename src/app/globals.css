@@ -1,14 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f7f7fb;
+  --background: #f6f7fb;
   --foreground: #0f172a;
+  --surface: #ffffff;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --accent: #111827;
+  --accent-2: #111827;
+  --font-body: "Manrope", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-display: "Space Grotesk", "Manrope", system-ui, sans-serif;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-sans: var(--font-body);
   --font-mono:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
     monospace;
@@ -18,14 +25,28 @@
   :root {
     --background: #0b1021;
     --foreground: #e5e7eb;
+    --surface: #0f172a;
+    --muted: #94a3b8;
+    --border: #1f2937;
+    --accent: #e5e7eb;
+    --accent-2: #cbd5e1;
   }
 }
 
 body {
+  font-family: var(--font-body);
   background:
-    radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.08), transparent 30%),
-    radial-gradient(circle at 80% 0%, rgba(14, 165, 233, 0.12), transparent 25%), var(--background);
+    radial-gradient(circle at 20% 20%, rgba(17, 24, 39, 0.06), transparent 30%),
+    radial-gradient(circle at 80% 0%, rgba(79, 70, 229, 0.08), transparent 25%), var(--background);
   color: var(--foreground);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+.font-display {
+  font-family: var(--font-display);
 }
 
 a {
@@ -33,6 +54,6 @@ a {
 }
 
 ::selection {
-  background: rgba(99, 102, 241, 0.25);
+  background: rgba(37, 99, 235, 0.2);
   color: #0f172a;
 }
