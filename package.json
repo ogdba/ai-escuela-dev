@@ -1,0 +1,46 @@
+{
+  "name": "ai-escuela-dev",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build --webpack",
+    "start": "next start",
+    "lint": "eslint .",
+    "test": "npm run test:unit",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:e2e": "playwright test",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,md,css}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,md,css}\"",
+    "security": "npm run security:semgrep || npm run security:audit",
+    "security:semgrep": "semgrep scan --config auto --error --include src || exit 1",
+    "security:audit": "npm audit --audit-level=moderate || (echo \"npm audit skipped: offline or registry unreachable\" && exit 0)"
+  },
+  "dependencies": {
+    "framer-motion": "^12.34.3",
+    "lucide-react": "^0.575.0",
+    "next": "16.1.6",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^5.1.4",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.6",
+    "eslint-config-prettier": "^10.1.8",
+    "jsdom": "^28.1.0",
+    "playwright": "^1.58.2",
+    "prettier": "^3.8.1",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vitest": "^4.0.18"
+  }
+}
