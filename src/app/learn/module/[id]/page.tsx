@@ -1,8 +1,9 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { ACTIVE_MODULES } from "@/content/es";
+import { MODULES } from "@/content/es";
 import { MODULE_DETAILS } from "@/content/lesson-details";
+import { getLessonsForModule } from "@/content/lessons";
 import { useProgress } from "@/lib/progress";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
@@ -15,6 +16,8 @@ import {
   Sparkles,
   PlayCircle,
   Trophy,
+  Clock,
+  ArrowRight,
 } from "lucide-react";
 
 const fadeIn = {
@@ -26,8 +29,9 @@ const fadeIn = {
 export default function ModulePage() {
   const params = useParams();
   const id = params.id as string;
-  const courseModule = ACTIVE_MODULES.find((m) => m.id === id);
+  const courseModule = MODULES.find((m) => m.id === id);
   const detail = courseModule ? MODULE_DETAILS[courseModule.id] : undefined;
+  const lessons = getLessonsForModule(id);
   const { getProgress, updateProgress } = useProgress();
   const progress = getProgress("module", id);
   const pct = progress?.percent || 0;
@@ -114,6 +118,54 @@ export default function ModulePage() {
             ))}
           </ul>
         </motion.section>
+
+        {/* Lessons */}
+        {lessons.length > 0 && (
+          <motion.section
+            {...fadeIn}
+            className="rounded-2xl border border-violet-200 dark:border-violet-800 bg-white/80 dark:bg-gray-900/60 p-6 shadow-lg"
+          >
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <BookOpen className="w-5 h-5 text-violet-600 dark:text-violet-300" />
+              Lecciones ({lessons.length})
+            </h2>
+            <div className="space-y-3">
+              {lessons.map((lesson) => {
+                const lessonProgress = getProgress("lesson", lesson.id);
+                const lessonPct = lessonProgress?.percent || 0;
+                return (
+                  <Link
+                    key={lesson.id}
+                    href={`/learn/module/${id}/lesson/${lesson.id}`}
+                    className="flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-violet-400 dark:hover:border-violet-600 bg-gray-50 dark:bg-gray-800/50 hover:bg-violet-50 dark:hover:bg-violet-950/20 transition-all group"
+                  >
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300 font-semibold text-sm shrink-0">
+                      {lessonPct >= 100 ? (
+                        <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                      ) : (
+                        lesson.number
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-violet-700 dark:group-hover:text-violet-300 transition-colors truncate">
+                        {lesson.title}
+                      </h3>
+                      <div className="flex items-center gap-3 mt-1 text-xs text-slate-500 dark:text-slate-400">
+                        <span className="inline-flex items-center gap-1">
+                          <Clock size={12} />
+                          {lesson.duration}
+                        </span>
+                        <span>{lesson.objectives.length} objetivos</span>
+                        <span>{lesson.sections.length} secciones</span>
+                      </div>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-violet-500 transition-colors shrink-0" />
+                  </Link>
+                );
+              })}
+            </div>
+          </motion.section>
+        )}
 
         {detail ? (
           <motion.section

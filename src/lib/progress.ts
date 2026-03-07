@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react";
 
 export interface ProgressEntry {
-  contentType: "module" | "lab";
+  contentType: "module" | "lab" | "lesson";
   contentId: string;
   startedAt: string;
   completedAt: string | null;
@@ -43,7 +43,7 @@ export function useProgress() {
   );
 
   const updateProgress = useCallback(
-    async (contentType: "module" | "lab", contentId: string, percent: number) => {
+    async (contentType: "module" | "lab" | "lesson", contentId: string, percent: number) => {
       const key = entryKey(contentType, contentId);
       const existing = entries[key];
       const now = new Date().toISOString();
