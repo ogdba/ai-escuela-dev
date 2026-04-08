@@ -1,17 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { SITE } from "@/content/es";
-import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/components/AuthProvider";
 
 export const metadata: Metadata = {
-  title: SITE.name,
-  description: SITE.description,
-  metadataBase: new URL("https://example.com"),
-  openGraph: {
-    title: SITE.name,
-    description: SITE.description,
-  },
+  title: "Generador de Prompts — PJENL",
+  description:
+    "Herramienta de generacion de prompts institucionales para el Poder Judicial del Estado de Nuevo Leon",
 };
 
 export default function RootLayout({
@@ -20,11 +14,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" suppressHydrationWarning>
-      <body className="antialiased bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-50 font-body">
-        <ThemeProvider>
-          <AuthProvider>{children}</AuthProvider>
-        </ThemeProvider>
+    <html lang="es">
+      <body className="antialiased">
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );
