@@ -34,7 +34,11 @@ export default function Navbar() {
               <Link
                 key={href}
                 href={href}
-                className={}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                  active
+                    ? "bg-navy text-gold"
+                    : "text-blue-mist hover:bg-navy hover:text-white"
+                }`}
               >
                 <Icon size={15} />
                 <span className="hidden md:inline">{label}</span>
