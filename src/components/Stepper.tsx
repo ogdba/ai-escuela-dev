@@ -1,8 +1,8 @@
-use client;
+"use client";
 
-import { Check } from lucide-react;
+import { Check } from "lucide-react";
 
-const STEPS = [Categoria, Tipo, Datos, Prompt];
+const STEPS = ["Categoria", "Tipo", "Datos", "Prompt"];
 
 interface StepperProps {
   currentStep: number;
@@ -10,14 +10,14 @@ interface StepperProps {
 
 export default function Stepper({ currentStep }: StepperProps) {
   return (
-    <div className=flex items-center justify-center gap-2 mb-8>
+    <div className="flex items-center justify-center gap-2 mb-8">
       {STEPS.map((label, i) => {
         const step = i + 1;
         const completed = step < currentStep;
         const active = step === currentStep;
 
         return (
-          <div key={label} className=flex items-center gap-2>
+          <div key={label} className="flex items-center gap-2">
             <div
               className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
                 completed

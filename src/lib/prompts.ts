@@ -9,7 +9,7 @@ export function renderTemplate(
       const value = values[field];
       if (!value || value.trim() === "") return "";
       // Replace placeholders inside the conditional block
-      return content.replace(/\{\{(\w+)\}\}/g, (__, innerField) => {
+      return content.replace(/\{\{(\w+)\}\}/g, (__: string, innerField: string) => {
         return values[innerField] ?? `{{${innerField}}}`;
       });
     },
