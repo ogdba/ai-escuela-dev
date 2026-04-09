@@ -1,20 +1,6 @@
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/login"];
-
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-
-  if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
-    return NextResponse.next();
-  }
-
-  // API routes handle their own auth
-  if (pathname.startsWith("/api/")) {
-    return NextResponse.next();
-  }
-
+export function middleware() {
   return NextResponse.next();
 }
 

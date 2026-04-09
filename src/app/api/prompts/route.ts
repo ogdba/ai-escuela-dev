@@ -1,19 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getCfUser } from "@/lib/cf-auth";
 import { getDb } from "@/lib/db";
 
 export async function POST(request: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) {
-    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-  }
+  const user = await getCfUser();
+  if (!user) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
-  const userId = (session.user as { id?: string }).id;
-  if (!userId) {
-    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-  }
-
+  const sql = getDb();
   const body = await request.json();
   const { categoria, tipo, campos_completados, prompt_generado, prompt_mejorado } = body;
 
@@ -21,9 +14,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Datos incompletos" }, { status: 400 });
   }
 
-  const rows = await getDb()`
+  const rows = await sql`
     INSERT INTO prompts_guardados (user_id, categoria, tipo, campos_completados, prompt_generado, prompt_mejorado, es_publico)
-    VALUES (${userId}::uuid, ${categoria}, ${tipo}, ${JSON.stringify(campos_completados)}::jsonb, ${prompt_generado}, ${prompt_mejorado}, false)
+    VALUES (${user.id}::uuid, ${categoria}, ${tipo}, ${JSON.stringify(campos_completados)}::jsonb, ${prompt_generado}, ${prompt_mejorado}, false)
     RETURNING id
   `;
 
@@ -31,58 +24,42 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) {
-    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-  }
+  const user = await getCfUser();
+  if (!user) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
-  const userId = (session.user as { id?: string }).id;
-  if (!userId) {
-    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-  }
-
-  const rows = await getDb()`
+  const sql = getDb();
+  const rows = await sql`
     SELECT id, categoria, tipo, prompt_generado, prompt_mejorado, es_publico, created_at
-    FROM prompts_guardados WHERE user_id = ${userId}::uuid ORDER BY created_at DESC
+    FROM prompts_guardados WHERE user_id = ${user.id}::uuid ORDER BY created_at DESC
   `;
 
   return NextResponse.json(rows);
 }
 
 export async function PATCH(request: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) {
-    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-  }
+  const user = await getCfUser();
+  if (!user) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
-  const userId = (session.user as { id?: string }).id;
+  const sql = getDb();
   const body = await request.json();
   const { id, es_publico } = body;
 
-  await getDb()`
-    UPDATE prompts_guardados SET es_publico = ${es_publico} WHERE id = ${id}::uuid AND user_id = ${userId}::uuid
-  `;
+  await sql`UPDATE prompts_guardados SET es_publico = ${es_publico} WHERE id = ${id}::uuid AND user_id = ${user.id}::uuid`;
 
   return NextResponse.json({ ok: true });
 }
 
 export async function DELETE(request: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) {
-    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-  }
+  const user = await getCfUser();
+  if (!user) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
-  const userId = (session.user as { id?: string }).id;
+  const sql = getDb();
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
 
-  if (!id) {
-    return NextResponse.json({ error: "ID requerido" }, { status: 400 });
-  }
+  if (!id) return NextResponse.json({ error: "ID requerido" }, { status: 400 });
 
-  await getDb()`
-    DELETE FROM prompts_guardados WHERE id = ${id}::uuid AND user_id = ${userId}::uuid
-  `;
+  await sql`DELETE FROM prompts_guardados WHERE id = ${id}::uuid AND user_id = ${user.id}::uuid`;
 
   return NextResponse.json({ ok: true });
 }

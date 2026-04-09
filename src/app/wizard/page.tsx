@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import AuthGuard from "@/components/AuthGuard";
 import Navbar from "@/components/Navbar";
 import Stepper from "@/components/Stepper";
 import CategoryPicker from "@/components/CategoryPicker";
@@ -43,7 +42,7 @@ export default function WizardPage() {
   };
 
   return (
-    <AuthGuard>
+    <>
       <Navbar />
       <main className="max-w-2xl mx-auto px-4 py-8">
         <Stepper currentStep={step} />
@@ -64,6 +63,6 @@ export default function WizardPage() {
           />
         )}
       </main>
-    </AuthGuard>
+    </>
   );
 }

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getCfUser } from "@/lib/cf-auth";
 import { getDb } from "@/lib/db";
 import { mejorarPrompt } from "@/lib/openrouter";
 import { SYSTEM_PROMPT_BASE, SYSTEM_PROMPT_PRESENTACIONES } from "@/content/system-prompts";
@@ -8,13 +7,8 @@ import { SYSTEM_PROMPT_BASE, SYSTEM_PROMPT_PRESENTACIONES } from "@/content/syst
 const LIMITE_DIARIO = parseInt(process.env.MEJORA_LIMITE_DIARIO || "20", 10);
 
 export async function POST(request: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) {
-    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-  }
-
-  const userId = (session.user as { id?: string }).id;
-  if (!userId) {
+  const user = await getCfUser();
+  if (!user) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
@@ -25,10 +19,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Prompt requerido" }, { status: 400 });
   }
 
-  // Check daily usage
+  const sql = getDb();
   const hoy = new Date().toLocaleDateString("en-CA", { timeZone: "America/Monterrey" });
-  const usoRows = await getDb()`
-    SELECT cantidad_usos FROM uso_ia WHERE user_id = ${userId}::uuid AND fecha = ${hoy}::date
+  const usoRows = await sql`
+    SELECT cantidad_usos FROM uso_ia WHERE user_id = ${user.id}::uuid AND fecha = ${hoy}::date
   `;
 
   const usosHoy = usoRows[0]?.cantidad_usos ?? 0;
@@ -45,13 +39,9 @@ export async function POST(request: NextRequest) {
     const mejorado = await mejorarPrompt(prompt, systemPrompt);
 
     if (usoRows.length > 0) {
-      await getDb()`
-        UPDATE uso_ia SET cantidad_usos = ${usosHoy + 1} WHERE user_id = ${userId}::uuid AND fecha = ${hoy}::date
-      `;
+      await sql`UPDATE uso_ia SET cantidad_usos = ${usosHoy + 1} WHERE user_id = ${user.id}::uuid AND fecha = ${hoy}::date`;
     } else {
-      await getDb()`
-        INSERT INTO uso_ia (user_id, fecha, cantidad_usos) VALUES (${userId}::uuid, ${hoy}::date, 1)
-      `;
+      await sql`INSERT INTO uso_ia (user_id, fecha, cantidad_usos) VALUES (${user.id}::uuid, ${hoy}::date, 1)`;
     }
 
     return NextResponse.json({ mejorado, restantes: LIMITE_DIARIO - usosHoy - 1 });

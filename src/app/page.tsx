@@ -1,6 +1,5 @@
 "use client";
 
-import AuthGuard from "@/components/AuthGuard";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -17,7 +16,7 @@ export default function DashboardPage() {
   const { user } = useAuth();
 
   return (
-    <AuthGuard>
+    <>
       <Navbar />
       <main className="max-w-3xl mx-auto px-4 py-10">
         <div className="mb-8">
@@ -38,6 +37,6 @@ export default function DashboardPage() {
           ))}
         </div>
       </main>
-    </AuthGuard>
+    </>
   );
 }

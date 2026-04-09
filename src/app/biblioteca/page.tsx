@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import AuthGuard from "@/components/AuthGuard";
 import Navbar from "@/components/Navbar";
 import PromptCard from "@/components/PromptCard";
 import { CATEGORIAS } from "@/content/plantillas";
@@ -31,7 +30,7 @@ export default function BibliotecaPage() {
   }, [filtro]);
 
   return (
-    <AuthGuard>
+    <>
       <Navbar />
       <main className="max-w-3xl mx-auto px-4 py-8">
         <h1 className="text-xl font-bold text-navy mb-1">Biblioteca</h1>
@@ -50,6 +49,6 @@ export default function BibliotecaPage() {
           <div className="space-y-3">{prompts.map((p) => (<PromptCard key={p.id} {...p} />))}</div>
         )}
       </main>
-    </AuthGuard>
+    </>
   );
 }

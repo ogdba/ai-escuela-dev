@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import AuthGuard from "@/components/AuthGuard";
 import Navbar from "@/components/Navbar";
 import PromptCard from "@/components/PromptCard";
 
@@ -26,7 +25,7 @@ export default function MisPromptsPage() {
   useEffect(() => { fetchPrompts(); }, []);
 
   return (
-    <AuthGuard>
+    <>
       <Navbar />
       <main className="max-w-3xl mx-auto px-4 py-8">
         <h1 className="text-xl font-bold text-navy mb-1">Mis Prompts</h1>
@@ -44,6 +43,6 @@ export default function MisPromptsPage() {
           </div>
         )}
       </main>
-    </AuthGuard>
+    </>
   );
 }
