@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import AuthGuard from "@/components/AuthGuard";
 import Navbar from "@/components/Navbar";
 import PromptCard from "@/components/PromptCard";
-import { supabase } from "@/lib/supabase";
 import { CATEGORIAS } from "@/content/plantillas";
 
 interface PromptRow {
@@ -19,10 +18,13 @@ export default function BibliotecaPage() {
 
   useEffect(() => {
     const fetchPublicos = async () => {
-      let query = supabase.from("prompts_guardados").select("*").eq("es_publico", true).order("created_at", { ascending: false });
-      if (filtro !== "todos") { query = query.eq("categoria", filtro); }
-      const { data } = await query;
-      setPrompts(data ?? []);
+      setLoading(true);
+      const url = filtro !== "todos" ? `/api/prompts/public?categoria=${filtro}` : "/api/prompts/public";
+      const res = await fetch(url);
+      if (res.ok) {
+        const data = await res.json();
+        setPrompts(data);
+      }
       setLoading(false);
     };
     fetchPublicos();

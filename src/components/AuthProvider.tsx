@@ -1,12 +1,10 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { supabase } from "@/lib/supabase";
-import type { User, Session } from "@supabase/supabase-js";
+import { SessionProvider, useSession, signIn, signOut } from "next-auth/react";
+import { createContext, useContext, type ReactNode } from "react";
 
 interface AuthContextValue {
-  user: User | null;
-  session: Session | null;
+  user: { id?: string; email?: string | null; name?: string | null } | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
   logout: () => Promise<void>;
@@ -14,7 +12,6 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue>({
   user: null,
-  session: null,
   loading: true,
   async login() { return { ok: false, error: "No inicializado" }; },
   async logout() {},
@@ -24,43 +21,40 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session: s } }) => {
-      setSession(s);
-      setUser(s?.user ?? null);
-      setLoading(false);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, s) => {
-      setSession(s);
-      setUser(s?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+function AuthInner({ children }: { children: ReactNode }) {
+  const { data: session, status } = useSession();
+  const loading = status === "loading";
+  const user = session?.user ? {
+    id: (session.user as { id?: string }).id,
+    email: session.user.email,
+    name: session.user.name,
+  } : null;
 
   const login = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
+    const res = await signIn("credentials", {
       email: email.trim().toLowerCase(),
       password,
+      redirect: false,
     });
-    if (error) return { ok: false, error: error.message };
+    if (res?.error) return { ok: false, error: "Credenciales incorrectas" };
     return { ok: true };
   };
 
   const logout = async () => {
-    await supabase.auth.signOut();
+    await signOut({ redirect: false });
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
+  );
+}
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  return (
+    <SessionProvider>
+      <AuthInner>{children}</AuthInner>
+    </SessionProvider>
   );
 }

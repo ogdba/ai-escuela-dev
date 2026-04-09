@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Copy, Check, Globe, Lock, Trash2 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
 import { PLANTILLAS, CATEGORIAS } from "@/content/plantillas";
 
 interface PromptCardProps {
@@ -37,12 +36,16 @@ export default function PromptCard({
 
   const togglePublico = async () => {
     const newVal = !publico;
-    await supabase.from("prompts_guardados").update({ es_publico: newVal }).eq("id", id);
+    await fetch("/api/prompts", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, es_publico: newVal }),
+    });
     setPublico(newVal);
   };
 
   const handleDelete = async () => {
-    await supabase.from("prompts_guardados").delete().eq("id", id);
+    await fetch(`/api/prompts?id=${id}`, { method: "DELETE" });
     onDelete?.();
   };
 

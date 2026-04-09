@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import AuthGuard from "@/components/AuthGuard";
 import Navbar from "@/components/Navbar";
 import PromptCard from "@/components/PromptCard";
-import { supabase } from "@/lib/supabase";
-import { useAuth } from "@/components/AuthProvider";
 
 interface PromptRow {
   id: string; categoria: string; tipo: string; prompt_generado: string;
@@ -13,20 +11,19 @@ interface PromptRow {
 }
 
 export default function MisPromptsPage() {
-  const { user } = useAuth();
   const [prompts, setPrompts] = useState<PromptRow[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchPrompts = async () => {
-    if (!user) return;
-    const { data } = await supabase
-      .from("prompts_guardados").select("*")
-      .eq("user_id", user.id).order("created_at", { ascending: false });
-    setPrompts(data ?? []);
+    const res = await fetch("/api/prompts");
+    if (res.ok) {
+      const data = await res.json();
+      setPrompts(data);
+    }
     setLoading(false);
   };
 
-  useEffect(() => { fetchPrompts(); }, [user]);
+  useEffect(() => { fetchPrompts(); }, []);
 
   return (
     <AuthGuard>
