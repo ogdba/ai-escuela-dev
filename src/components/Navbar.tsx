@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
-import { Wand2, BookMarked, Library, User, LogOut } from "lucide-react";
+import { Wand2, BookMarked, Library, User, LogOut, Lightbulb } from "lucide-react";
 
 const NAV_ITEMS = [
   { href: "/wizard", label: "Generar Prompt", icon: Wand2 },
   { href: "/mis-prompts", label: "Mis Prompts", icon: BookMarked },
   { href: "/biblioteca", label: "Biblioteca", icon: Library },
+  { href: "/tips", label: "Tips", icon: Lightbulb },
   { href: "/perfil", label: "Perfil", icon: User },
 ];
 
@@ -33,11 +34,7 @@ export default function Navbar() {
               <Link
                 key={href}
                 href={href}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                  active
-                    ? "bg-navy text-gold"
-                    : "text-blue-mist hover:bg-navy hover:text-white"
-                }`}
+                className={}
               >
                 <Icon size={15} />
                 <span className="hidden md:inline">{label}</span>
