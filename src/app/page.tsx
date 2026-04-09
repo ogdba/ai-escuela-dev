@@ -1,385 +1,43 @@
 "use client";
 
-import {
-  CheckCircle2,
-  GraduationCap,
-  Shield,
-  Sparkles,
-  BookOpen,
-  FlaskConical,
-  ArrowRight,
-} from "lucide-react";
-import { motion } from "framer-motion";
-import Link from "next/link";
+import AuthGuard from "@/components/AuthGuard";
 import Navbar from "@/components/Navbar";
-import Hero from "@/components/Hero";
-import SectionHeader from "@/components/SectionHeader";
-import ContactForm from "@/components/ContactForm";
-import DemoSandbox from "@/components/DemoSandbox";
-import {
-  CURRICULUM_SECTION,
-  ACTIVE_MODULES,
-  ACTIVE_LABS,
-  PRICING,
-  FAQ_DATA,
-  OWASP_LLM_TOP10,
-  CTA,
-  FOOTER,
-} from "@/content/es";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { Wand2, BookMarked, Library } from "lucide-react";
+import { useAuth } from "@/components/AuthProvider";
 
-const fadeIn = {
-  initial: { opacity: 0, y: 24 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.2 },
-  transition: { duration: 0.5 },
-};
+const ACTIONS = [
+  { href: "/wizard", icon: Wand2, title: "Generar Prompt", description: "Crea un prompt paso a paso con el wizard", color: "bg-gold" },
+  { href: "/mis-prompts", icon: BookMarked, title: "Mis Prompts", description: "Revisa y reutiliza tus prompts guardados", color: "bg-navy" },
+  { href: "/biblioteca", icon: Library, title: "Biblioteca", description: "Explora prompts compartidos por otros directores", color: "bg-navy/80" },
+];
 
-const levelColor: Record<string, string> = {
-  emerald: "text-emerald-700 dark:text-emerald-300",
-  blue: "text-blue-700 dark:text-blue-300",
-  purple: "text-purple-700 dark:text-purple-300",
-  amber: "text-amber-700 dark:text-amber-300",
-};
+export default function DashboardPage() {
+  const { user } = useAuth();
 
-export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50/60 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 text-gray-900 dark:text-gray-50">
+    <AuthGuard>
       <Navbar />
-      <main className="flex flex-col gap-24 pb-24">
-        <Hero />
-
-        <DemoSandbox />
-
-        {/* Curriculum */}
-        <section id="curriculum" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white/70 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-800 rounded-3xl p-10 shadow-xl shadow-violet-500/10 backdrop-blur">
-            <div className="flex items-start gap-4 mb-10">
-              <GraduationCap className="text-violet-600 dark:text-violet-300" />
-              <SectionHeader
-                eyebrow={CURRICULUM_SECTION.subtitle}
-                title={CURRICULUM_SECTION.title}
-                subtitle={CURRICULUM_SECTION.description}
-              />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              {CURRICULUM_SECTION.levels.map((level) => (
-                <motion.div
-                  key={level.name}
-                  {...fadeIn}
-                  className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 p-5"
-                >
-                  <div className="flex items-center justify-between">
-                    <span
-                      className={`text-sm font-semibold ${levelColor[level.color] || "text-gray-700"}`}
-                    >
-                      {level.name}
-                    </span>
-                    <span className="text-xs uppercase tracking-wide text-gray-500">Ruta</span>
-                  </div>
-                  <ul className="mt-4 space-y-2 text-sm text-gray-700 dark:text-gray-200">
-                    {level.modules.map((m) => (
-                      <li key={m} className="flex items-center gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-violet-500" />
-                        {m}
-                      </li>
-                    ))}
-                  </ul>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Modules */}
-        <section id="modules" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-start gap-3 mb-8">
-            <BookOpen className="text-violet-600 dark:text-violet-300" />
-            <SectionHeader
-              eyebrow="Módulos"
-              title="Del fundamento a producción"
-              subtitle="8 módulos diseñados para construir, asegurar y desplegar aplicaciones con IA."
-            />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {ACTIVE_MODULES.map((module) => (
-              <motion.div
-                key={module.id}
-                {...fadeIn}
-                className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/60 p-6 shadow-lg shadow-blue-500/10 backdrop-blur"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-semibold text-gray-500">
-                    Módulo {module.number}
-                  </span>
-                  <span className="inline-flex items-center gap-1 text-xs text-violet-600 dark:text-violet-300">
-                    <Sparkles className="w-4 h-4" />
-                    {module.icon}
-                  </span>
-                </div>
-                <h3 className="text-xl font-semibold">{module.title}</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
-                  {module.description}
-                </p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {module.topics.slice(0, 4).map((topic) => (
-                    <span
-                      key={topic}
-                      className="rounded-full bg-violet-100/70 dark:bg-violet-900/40 text-violet-800 dark:text-violet-200 px-3 py-1 text-xs"
-                    >
-                      {topic}
-                    </span>
-                  ))}
-                </div>
-                <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
-                  Proyecto: {module.project}
-                </p>
-                <Link
-                  href={`/learn/module/${module.id}`}
-                  className="mt-4 inline-flex items-center gap-2 rounded-xl bg-violet-600 text-white font-semibold px-4 py-2 text-sm shadow-md shadow-violet-500/20 hover:-translate-y-0.5 transition"
-                >
-                  Tomar lección
-                  <ArrowRight size={16} />
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </section>
-
-        {/* Labs */}
-        <section id="labs" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-start gap-3 mb-8">
-            <FlaskConical className="text-emerald-500" />
-            <SectionHeader
-              eyebrow="Fun Labs"
-              title="Laboratorios gamificados"
-              subtitle="Practica con retos rápidos, experimenta y mide tus progresos."
-            />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {ACTIVE_LABS.slice(0, 8).map((lab) => (
-              <motion.div
-                key={lab.id}
-                {...fadeIn}
-                className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/70 p-5 shadow-md shadow-emerald-500/10"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-300">
-                    {lab.title}
-                  </span>
-                  <span className="text-xs text-gray-500">{lab.duration}</span>
-                </div>
-                <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">{lab.description}</p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {lab.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-full bg-emerald-100/70 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-100 px-2.5 py-1 text-[11px]"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <Link
-                  href={`/learn/lab/${lab.id}`}
-                  className="mt-4 inline-flex items-center gap-2 rounded-xl bg-emerald-600 text-white font-semibold px-4 py-2 text-sm shadow-md shadow-emerald-500/20 hover:-translate-y-0.5 transition"
-                >
-                  Iniciar laboratorio
-                  <ArrowRight size={16} />
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </section>
-
-        {/* Security */}
-        <section id="security" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-start gap-3 mb-8">
-            <Shield className="text-amber-500" />
-            <SectionHeader
-              eyebrow={OWASP_LLM_TOP10.subtitle}
-              title={OWASP_LLM_TOP10.title}
-              subtitle={OWASP_LLM_TOP10.description}
-            />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {OWASP_LLM_TOP10.risks.map((risk) => (
-              <motion.div
-                key={risk.id}
-                {...fadeIn}
-                className="rounded-2xl border border-amber-200 dark:border-amber-900/40 bg-white/80 dark:bg-gray-900/60 p-5 shadow-lg shadow-amber-500/10"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-amber-600 dark:text-amber-200">
-                    {risk.id}
-                  </span>
-                  <span className="text-sm font-semibold">{risk.name}</span>
-                </div>
-                <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">{risk.risk}</p>
-                <p className="mt-3 text-sm text-gray-900 dark:text-gray-100">
-                  <span className="font-semibold text-amber-700 dark:text-amber-300">
-                    Mitigación:
-                  </span>{" "}
-                  {risk.mitigation}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </section>
-
-        {/* Pricing */}
-        <section id="pricing" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionHeader
-            eyebrow={PRICING.subtitle}
-            title={PRICING.title}
-            subtitle={PRICING.description}
-            align="center"
-          />
-          <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
-            {PRICING.plans.map((plan) => (
-              <motion.div
-                key={plan.id}
-                {...fadeIn}
-                className={`rounded-3xl border p-8 backdrop-blur shadow-lg ${
-                  plan.highlighted
-                    ? "border-slate-900 bg-slate-900 text-white"
-                    : "border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/60"
-                }`}
-              >
-                <h3 className={`text-xl font-semibold ${plan.highlighted ? "text-white" : ""}`}>
-                  {plan.name}
-                </h3>
-                <p className="mt-2 text-3xl font-bold">
-                  {plan.price}
-                  {plan.period ? (
-                    <span
-                      className={`text-sm ${
-                        plan.highlighted ? "text-white/80" : "text-gray-500 dark:text-gray-300"
-                      }`}
-                    >
-                      {" "}
-                      {plan.period}
-                    </span>
-                  ) : null}
-                </p>
-                <p
-                  className={`mt-3 text-sm ${
-                    plan.highlighted ? "text-white/80" : "text-gray-600 dark:text-gray-300"
-                  }`}
-                >
-                  {plan.description}
-                </p>
-                <ul
-                  className={`mt-5 space-y-2 text-sm ${
-                    plan.highlighted ? "text-white" : "text-gray-700 dark:text-gray-200"
-                  }`}
-                >
-                  {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-center gap-2">
-                      <CheckCircle2
-                        className={`w-4 h-4 ${plan.highlighted ? "text-amber-300" : "text-violet-500"}`}
-                      />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                <a
-                  href="#contact"
-                  className={`mt-6 inline-flex w-full items-center justify-center rounded-xl font-semibold py-3 transition hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
-                    plan.highlighted
-                      ? "bg-white text-slate-900 shadow-lg shadow-white/20 focus-visible:outline-white/70"
-                      : "bg-slate-900 text-white focus-visible:outline-slate-300"
-                  }`}
-                >
-                  {plan.cta}
-                </a>
-              </motion.div>
-            ))}
-          </div>
-        </section>
-
-        {/* FAQ */}
-        <section id="faq" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionHeader
-            eyebrow={FAQ_DATA.subtitle}
-            title={FAQ_DATA.title}
-            subtitle="Lo que nos preguntan con más frecuencia."
-            align="center"
-          />
-          <div className="mt-8 space-y-4">
-            {FAQ_DATA.items.map((item) => (
-              <motion.details
-                key={item.q}
-                {...fadeIn}
-                className="group rounded-2xl border border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/60 p-5"
-              >
-                <summary className="flex items-center justify-between cursor-pointer text-lg font-semibold text-gray-900 dark:text-white">
-                  {item.q}
-                  <span className="ml-4 text-violet-500 group-open:rotate-45 transition-transform">
-                    +
-                  </span>
-                </summary>
-                <p className="mt-3 text-sm text-gray-700 dark:text-gray-200">{item.a}</p>
-              </motion.details>
-            ))}
-          </div>
-        </section>
-
-        {/* CTA */}
-        <section id="cta" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-xl shadow-slate-200/60 dark:shadow-none p-10">
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-              <div className="space-y-2">
-                <p className="text-sm uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
-                  {CTA.secondary}
-                </p>
-                <h3 className="font-display text-3xl md:text-4xl font-semibold text-slate-900 dark:text-white">
-                  {CTA.title}
-                </h3>
-                <p className="mt-1 text-slate-600 dark:text-slate-300 max-w-2xl">
-                  {CTA.description}
-                </p>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                <Link
-                  href="/login"
-                  className="inline-flex items-center justify-center rounded-xl bg-violet-600 text-white font-bold px-6 py-3 shadow-lg shadow-violet-600/30 hover:bg-violet-700 hover:-translate-y-0.5 transition"
-                >
-                  {CTA.primary}
-                </Link>
-                <a
-                  href="#curriculum"
-                  className="inline-flex items-center justify-center rounded-xl border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-semibold px-6 py-3 hover:border-slate-500 dark:hover:border-slate-500 transition"
-                >
-                  {CTA.secondary}
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Contact */}
-        <section id="contact" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionHeader
-            eyebrow="Contacto"
-            title="Agenda tu plaza"
-            subtitle="Valida tus datos y recibe detalles de la siguiente cohorte."
-          />
-          <div className="mt-8">
-            <ContactForm />
-          </div>
-        </section>
-      </main>
-
-      <footer className="border-t border-gray-200 dark:border-gray-800 bg-slate-50 dark:bg-gray-950 py-12">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center md:text-left">
-            <p className="font-semibold text-slate-900 dark:text-white text-sm">
-              Escuela IA para Desarrolladores
-            </p>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{FOOTER.copyright}</p>
-          </div>
+      <main className="max-w-3xl mx-auto px-4 py-10">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-navy">Bienvenido/a</h1>
+          <p className="text-sm text-gray-text mt-1">{user?.email} — Generador de Prompts PJENL</p>
         </div>
-      </footer>
-    </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {ACTIONS.map(({ href, icon: Icon, title, description, color }) => (
+            <motion.div key={href} whileHover={{ y: -3 }}>
+              <Link href={href} className="block p-5 rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md hover:border-gold transition-all">
+                <div className={`w-10 h-10 rounded-lg ${color} flex items-center justify-center mb-3`}>
+                  <Icon size={20} className="text-white" />
+                </div>
+                <h2 className="font-semibold text-navy text-sm">{title}</h2>
+                <p className="text-xs text-gray-text mt-1">{description}</p>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+      </main>
+    </AuthGuard>
   );
 }
