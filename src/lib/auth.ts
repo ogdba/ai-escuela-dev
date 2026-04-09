@@ -1,7 +1,7 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { sql } from "@/lib/db";
+import { getDb } from "@/lib/db";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -14,7 +14,7 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
-        const rows = await sql`
+        const rows = await getDb()`
           SELECT id, email, name, password_hash 
           FROM users 
           WHERE email = ${credentials.email.trim().toLowerCase()}

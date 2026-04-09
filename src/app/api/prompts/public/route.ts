@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { sql } from "@/lib/db";
+import { getDb } from "@/lib/db";
 
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -14,12 +14,12 @@ export async function GET(request: NextRequest) {
 
   let rows;
   if (categoria && categoria !== "todos") {
-    rows = await sql`
+    rows = await getDb()`
       SELECT id, categoria, tipo, prompt_generado, prompt_mejorado, es_publico, created_at
       FROM prompts_guardados WHERE es_publico = true AND categoria = ${categoria} ORDER BY created_at DESC
     `;
   } else {
-    rows = await sql`
+    rows = await getDb()`
       SELECT id, categoria, tipo, prompt_generado, prompt_mejorado, es_publico, created_at
       FROM prompts_guardados WHERE es_publico = true ORDER BY created_at DESC
     `;

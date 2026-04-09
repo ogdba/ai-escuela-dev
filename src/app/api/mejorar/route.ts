@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { sql } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { mejorarPrompt } from "@/lib/openrouter";
 import { SYSTEM_PROMPT_BASE, SYSTEM_PROMPT_PRESENTACIONES } from "@/content/system-prompts";
 
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
 
   // Check daily usage
   const hoy = new Date().toLocaleDateString("en-CA", { timeZone: "America/Monterrey" });
-  const usoRows = await sql`
+  const usoRows = await getDb()`
     SELECT cantidad_usos FROM uso_ia WHERE user_id = ${userId}::uuid AND fecha = ${hoy}::date
   `;
 
@@ -45,11 +45,11 @@ export async function POST(request: NextRequest) {
     const mejorado = await mejorarPrompt(prompt, systemPrompt);
 
     if (usoRows.length > 0) {
-      await sql`
+      await getDb()`
         UPDATE uso_ia SET cantidad_usos = ${usosHoy + 1} WHERE user_id = ${userId}::uuid AND fecha = ${hoy}::date
       `;
     } else {
-      await sql`
+      await getDb()`
         INSERT INTO uso_ia (user_id, fecha, cantidad_usos) VALUES (${userId}::uuid, ${hoy}::date, 1)
       `;
     }

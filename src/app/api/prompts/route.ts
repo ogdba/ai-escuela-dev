@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { sql } from "@/lib/db";
+import { getDb } from "@/lib/db";
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Datos incompletos" }, { status: 400 });
   }
 
-  const rows = await sql`
+  const rows = await getDb()`
     INSERT INTO prompts_guardados (user_id, categoria, tipo, campos_completados, prompt_generado, prompt_mejorado, es_publico)
     VALUES (${userId}::uuid, ${categoria}, ${tipo}, ${JSON.stringify(campos_completados)}::jsonb, ${prompt_generado}, ${prompt_mejorado}, false)
     RETURNING id
@@ -41,7 +41,7 @@ export async function GET() {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
-  const rows = await sql`
+  const rows = await getDb()`
     SELECT id, categoria, tipo, prompt_generado, prompt_mejorado, es_publico, created_at
     FROM prompts_guardados WHERE user_id = ${userId}::uuid ORDER BY created_at DESC
   `;
@@ -59,7 +59,7 @@ export async function PATCH(request: NextRequest) {
   const body = await request.json();
   const { id, es_publico } = body;
 
-  await sql`
+  await getDb()`
     UPDATE prompts_guardados SET es_publico = ${es_publico} WHERE id = ${id}::uuid AND user_id = ${userId}::uuid
   `;
 
@@ -80,7 +80,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: "ID requerido" }, { status: 400 });
   }
 
-  await sql`
+  await getDb()`
     DELETE FROM prompts_guardados WHERE id = ${id}::uuid AND user_id = ${userId}::uuid
   `;
 
