@@ -1,9 +1,11 @@
 "use client";
 
-import { GraduationCap, ExternalLink } from "lucide-react";
+import { GraduationCap, ExternalLink, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import { CURSOS } from "@/content/cursos";
+import { CURSOS_CONTENIDO } from "@/content/curso-contenido";
 
 const nivelColors: Record<string, string> = {
   basico: "bg-emerald-100 text-emerald-800",
@@ -16,6 +18,10 @@ const nivelLabels: Record<string, string> = {
   intermedio: "Intermedio",
   avanzado: "Avanzado",
 };
+
+function hasInPlatformContent(cursoId: string) {
+  return CURSOS_CONTENIDO.some((c) => c.cursoId === cursoId);
+}
 
 export default function CursosPage() {
   return (
@@ -31,33 +37,68 @@ export default function CursosPage() {
         </p>
 
         <div className="space-y-3">
-          {CURSOS.map((curso) => (
-            <motion.a
-              key={curso.id}
-              href={curso.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ y: -2 }}
-              className="block rounded-xl border border-gray-200 bg-white p-5 shadow-sm hover:shadow-md hover:border-gold transition-all"
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-gray-text">#{curso.numero}</span>
-                  <span className={`text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full ${nivelColors[curso.nivel]}`}>
-                    {nivelLabels[curso.nivel]}
-                  </span>
-                  {curso.gratuito && (
-                    <span className="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full bg-gold/10 text-gold">
-                      Gratis
+          {CURSOS.map((curso) => {
+            const hasContent = hasInPlatformContent(curso.id);
+
+            if (hasContent) {
+              return (
+                <motion.div key={curso.id} whileHover={{ y: -2 }}>
+                  <Link
+                    href={`/cursos/${curso.id}`}
+                    className="block rounded-xl border border-gray-200 bg-white p-5 shadow-sm hover:shadow-md hover:border-gold transition-all"
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-xs font-bold text-gray-text">#{curso.numero}</span>
+                        <span className={`text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full ${nivelColors[curso.nivel]}`}>
+                          {nivelLabels[curso.nivel]}
+                        </span>
+                        {curso.gratuito && (
+                          <span className="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full bg-gold/10 text-gold">
+                            Gratis
+                          </span>
+                        )}
+                        <span className="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full bg-navy/10 text-navy flex items-center gap-1">
+                          <BookOpen size={10} /> Contenido disponible
+                        </span>
+                      </div>
+                      <BookOpen size={14} className="text-navy shrink-0" />
+                    </div>
+                    <h2 className="text-sm font-semibold text-navy">{curso.titulo}</h2>
+                    <p className="text-xs text-gray-700 mt-1.5 leading-relaxed">{curso.descripcion}</p>
+                  </Link>
+                </motion.div>
+              );
+            }
+
+            return (
+              <motion.a
+                key={curso.id}
+                href={curso.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ y: -2 }}
+                className="block rounded-xl border border-gray-200 bg-white p-5 shadow-sm hover:shadow-md hover:border-gold transition-all"
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-gray-text">#{curso.numero}</span>
+                    <span className={`text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full ${nivelColors[curso.nivel]}`}>
+                      {nivelLabels[curso.nivel]}
                     </span>
-                  )}
+                    {curso.gratuito && (
+                      <span className="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full bg-gold/10 text-gold">
+                        Gratis
+                      </span>
+                    )}
+                  </div>
+                  <ExternalLink size={14} className="text-gray-text shrink-0" />
                 </div>
-                <ExternalLink size={14} className="text-gray-text shrink-0" />
-              </div>
-              <h2 className="text-sm font-semibold text-navy">{curso.titulo}</h2>
-              <p className="text-xs text-gray-700 mt-1.5 leading-relaxed">{curso.descripcion}</p>
-            </motion.a>
-          ))}
+                <h2 className="text-sm font-semibold text-navy">{curso.titulo}</h2>
+                <p className="text-xs text-gray-700 mt-1.5 leading-relaxed">{curso.descripcion}</p>
+              </motion.a>
+            );
+          })}
         </div>
 
         <div className="mt-8 p-4 rounded-xl bg-navy/5 border border-navy/10">
