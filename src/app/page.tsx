@@ -74,7 +74,7 @@ export default function DashboardPage() {
                   {new Date(promptDia.fecha).toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" })}
                 </span>
               </div>
-              <h2 className="text-lg font-semibold text-navy mb-4">{promptDia.titulo?</h2>
+              <h2 className="text-lg font-semibold text-navy mb-4">{promptDia.titulo}</h2>
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-semibold text-gray-text uppercase tracking-wide">Prompt</span>
