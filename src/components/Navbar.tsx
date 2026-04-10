@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
-import { Wand2, BookMarked, Library, User, LogOut, Lightbulb, Newspaper } from "lucide-react";
+import { Wand2, BookMarked, Library, User, LogOut, Lightbulb, Newspaper, GraduationCap } from "lucide-react";
 
 const NAV_ITEMS = [
   { href: "/wizard", label: "Generar Prompt", icon: Wand2 },
@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { href: "/biblioteca", label: "Biblioteca", icon: Library },
   { href: "/tips", label: "Tips", icon: Lightbulb },
   { href: "/novedades", label: "Novedades", icon: Newspaper },
+  { href: "/cursos", label: "Cursos", icon: GraduationCap },
   { href: "/perfil", label: "Perfil", icon: User },
 ];
 
