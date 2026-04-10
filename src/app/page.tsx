@@ -11,6 +11,7 @@ interface PromptDia {
   titulo: string;
   categoria: string;
   prompt_texto: string;
+  ejemplo_uso: string;
   fecha: string;
 }
 
@@ -18,10 +19,17 @@ const ACTIONS = [
   { href: "/wizard", icon: Wand2, title: "Generar Prompt", description: "Crea un prompt paso a paso con el wizard", color: "bg-gold" },
   { href: "/mis-prompts", icon: BookMarked, title: "Mis Prompts", description: "Revisa y reutiliza tus prompts guardados", color: "bg-navy" },
   { href: "/biblioteca", icon: Library, title: "Biblioteca", description: "Prompts compartidos por otros directores", color: "bg-navy/80" },
-  { href: "/prompt-del-dia", icon: Sparkles, title: "Prompt del Dia", description: "Un prompt nuevo cada dia para inspirarte", color: "bg-gold/80" },
   { href: "/tips", icon: Lightbulb, title: "Tips Rapidos", description: "Consejos semanales para usar IA mejor", color: "bg-navy/60" },
   { href: "/faq", icon: HelpCircle, title: "FAQ", description: "Respuestas a preguntas frecuentes sobre IA", color: "bg-navy/40" },
 ];
+
+const catColors: Record<string, string> = {
+  analizar: "bg-blue-100 text-blue-800",
+  generar: "bg-emerald-100 text-emerald-800",
+  datos: "bg-purple-100 text-purple-800",
+  comunicar: "bg-amber-100 text-amber-800",
+  presentaciones: "bg-rose-100 text-rose-800",
+};
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -52,22 +60,37 @@ export default function DashboardPage() {
         </div>
 
         {promptDia && (
-          <Link href="/prompt-del-dia" className="block mb-6">
-            <motion.div whileHover={{ y: -2 }} className="rounded-xl border border-gold/30 bg-gold/5 p-4 shadow-sm hover:shadow-md transition-all">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <Sparkles size={16} className="text-gold" />
-                  <span className="text-xs font-semibold text-gold uppercase tracking-wide">Prompt del Dia</span>
-                </div>
-                <button onClick={(e) => { e.preventDefault(); handleCopy(); }} className="flex items-center gap-1 text-xs font-medium text-navy hover:text-gold transition-colors">
-                  {copied ? <Check size={13} className="text-green" /> : <Copy size={13} />}
-                  {copied ? "Copiado" : "Copiar"}
-                </button>
+          <div className="mb-8 rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+            <div className="p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Sparkles size={18} className="text-gold" />
+                <span className="text-xs font-semibold text-gold uppercase tracking-wide">Prompt del Dia</span>
               </div>
-              <h3 className="text-sm font-semibold text-navy">{promptDia.titulo}</h3>
-              <p className="text-xs text-gray-text mt-1 line-clamp-2">{promptDia.prompt_texto}</p>
-            </motion.div>
-          </Link>
+              <div className="flex items-center justify-between mb-3">
+                <span className={`text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full ${catColors[promptDia.categoria] || "bg-gray-100 text-gray-800"}`}>
+                  {promptDia.categoria}
+                </span>
+                <span className="text-xs text-gray-text">
+                  {new Date(promptDia.fecha).toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" })}
+                </span>
+              </div>
+              <h2 className="text-lg font-semibold text-navy mb-4">{promptDia.titulo?</h2>
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-semibold text-gray-text uppercase tracking-wide">Prompt</span>
+                  <button onClick={handleCopy} className="flex items-center gap-1 text-xs font-medium text-navy hover:text-gold transition-colors">
+                    {copied ? <Check size={14} className="text-green" /> : <Copy size={14} />}
+                    {copied ? "Copiado" : "Copiar"}
+                  </button>
+                </div>
+                <pre className="whitespace-pre-wrap text-sm bg-gray-bg border border-gray-200 rounded-xl p-4 font-sans">{promptDia.prompt_texto}</pre>
+              </div>
+              <div>
+                <span className="text-xs font-semibold text-gold uppercase tracking-wide">Como usarlo</span>
+                <p className="mt-2 text-sm text-gray-700">{promptDia.ejemplo_uso}</p>
+              </div>
+            </div>
+          </div>
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
