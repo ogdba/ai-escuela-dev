@@ -10,7 +10,9 @@ import { useAuth } from "@/components/AuthProvider";
 interface PromptDia {
   titulo: string;
   categoria: string;
+  que_hace?: string;
   prompt_texto: string;
+  que_obtendras?: string;
   ejemplo_uso: string;
   fecha: string;
 }
@@ -58,44 +60,10 @@ export default function DashboardPage() {
       <main className="max-w-3xl mx-auto px-4 py-10">
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-navy">Bienvenido/a</h1>
-          <p className="text-sm text-gray-text mt-1">{user?.email} — Generador de Prompts PJENL</p>
+          <p className="text-sm text-gray-text mt-1">{user?.email} \u2014 Generador de Prompts PJENL</p>
         </div>
 
-        {promptDia && (
-          <div className="mb-8 rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-            <div className="p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Sparkles size={18} className="text-gold" />
-                <span className="text-xs font-semibold text-gold uppercase tracking-wide">Prompt del Dia</span>
-              </div>
-              <div className="flex items-center justify-between mb-3">
-                <span className={`text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full ${catColors[promptDia.categoria] || "bg-gray-100 text-gray-800"}`}>
-                  {promptDia.categoria}
-                </span>
-                <span className="text-xs text-gray-text">
-                  {new Date(promptDia.fecha).toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" })}
-                </span>
-              </div>
-              <h2 className="text-lg font-semibold text-navy mb-4">{promptDia.titulo}</h2>
-              <div className="mb-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-semibold text-gray-text uppercase tracking-wide">Prompt</span>
-                  <button onClick={handleCopy} className="flex items-center gap-1 text-xs font-medium text-navy hover:text-gold transition-colors">
-                    {copied ? <Check size={14} className="text-green" /> : <Copy size={14} />}
-                    {copied ? "Copiado" : "Copiar"}
-                  </button>
-                </div>
-                <pre className="whitespace-pre-wrap text-sm bg-gray-bg border border-gray-200 rounded-xl p-4 font-sans">{promptDia.prompt_texto}</pre>
-              </div>
-              <div>
-                <span className="text-xs font-semibold text-gold uppercase tracking-wide">Como usarlo</span>
-                <p className="mt-2 text-sm text-gray-700">{promptDia.ejemplo_uso}</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
           {ACTIONS.map(({ href, icon: Icon, title, description, color }) => (
             <motion.div key={href} whileHover={{ y: -3 }}>
               <Link href={href} className="block p-5 rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md hover:border-gold transition-all">
@@ -108,6 +76,58 @@ export default function DashboardPage() {
             </motion.div>
           ))}
         </div>
+
+        {promptDia && (
+          <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+            <div className="p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Sparkles size={18} className="text-gold" />
+                <span className="text-xs font-semibold text-gold uppercase tracking-wide">Prompt del Dia</span>
+              </div>
+
+              <div className="flex items-center justify-between mb-3">
+                <span className={`text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full ${catColors[promptDia.categoria] || "bg-gray-100 text-gray-800"}`}>
+                  {promptDia.categoria}
+                </span>
+                <span className="text-xs text-gray-text">
+                  {new Date(promptDia.fecha).toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" })}
+                </span>
+              </div>
+
+              <h2 className="text-lg font-semibold text-navy mb-2">{promptDia.titulo}</h2>
+
+              {promptDia.que_hace && (
+                <div className="mb-4">
+                  <span className="text-xs font-semibold text-navy uppercase tracking-wide">Que hace este prompt</span>
+                  <p className="mt-1.5 text-sm text-gray-700 leading-relaxed">{promptDia.que_hace}</p>
+                </div>
+              )}
+
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-semibold text-gray-text uppercase tracking-wide">Prompt</span>
+                  <button onClick={handleCopy} className="flex items-center gap-1 text-xs font-medium text-navy hover:text-gold transition-colors">
+                    {copied ? <Check size={14} className="text-green" /> : <Copy size={14} />}
+                    {copied ? "Copiado" : "Copiar"}
+                  </button>
+                </div>
+                <pre className="whitespace-pre-wrap text-sm bg-gray-bg border border-gray-200 rounded-xl p-4 font-sans">{promptDia.prompt_texto}</pre>
+              </div>
+
+              {promptDia.que_obtendras && (
+                <div className="mb-4 p-3 rounded-lg bg-emerald-50 border border-emerald-200">
+                  <span className="text-xs font-semibold text-emerald-800 uppercase tracking-wide">Que obtendras</span>
+                  <p className="mt-1.5 text-sm text-emerald-700 leading-relaxed">{promptDia.que_obtendras}</p>
+                </div>
+              )}
+
+              <div>
+                <span className="text-xs font-semibold text-gold uppercase tracking-wide">Ejemplo de uso</span>
+                <p className="mt-1.5 text-sm text-gray-700 leading-relaxed">{promptDia.ejemplo_uso}</p>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </>
   );

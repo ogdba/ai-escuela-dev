@@ -4,7 +4,7 @@ import { getDb } from "@/lib/db";
 export async function GET() {
   const sql = getDb();
   const rows = await sql`
-    SELECT id, titulo, categoria, prompt_texto, ejemplo_uso, fecha
+    SELECT id, titulo, categoria, que_hace, prompt_texto, que_obtendras, ejemplo_uso, fecha
     FROM prompt_del_dia ORDER BY fecha DESC LIMIT 1
   `;
 

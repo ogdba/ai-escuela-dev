@@ -22,13 +22,15 @@ export async function POST(request: NextRequest) {
   const data = await generateJSON<{
     titulo: string;
     categoria: string;
+    que_hace: string;
     prompt_texto: string;
+    que_obtendras: string;
     ejemplo_uso: string;
   }>(PROMPT_DEL_DIA_SYSTEM, `Genera el prompt del dia para ${hoy}. Categoria sugerida: ${categorias[Math.floor(Math.random() * 5)]}`);
 
   await sql`
-    INSERT INTO prompt_del_dia (titulo, categoria, prompt_texto, ejemplo_uso, fecha)
-    VALUES (${data.titulo}, ${data.categoria}, ${data.prompt_texto}, ${data.ejemplo_uso}, ${hoy}::date)
+    INSERT INTO prompt_del_dia (titulo, categoria, que_hace, prompt_texto, que_obtendras, ejemplo_uso, fecha)
+    VALUES (${data.titulo}, ${data.categoria}, ${data.que_hace}, ${data.prompt_texto}, ${data.que_obtendras}, ${data.ejemplo_uso}, ${hoy}::date)
   `;
 
   return NextResponse.json({ message: "Prompt generado", data });

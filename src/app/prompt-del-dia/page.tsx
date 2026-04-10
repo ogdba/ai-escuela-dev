@@ -8,7 +8,9 @@ interface PromptDia {
   id: string;
   titulo: string;
   categoria: string;
+  que_hace?: string;
   prompt_texto: string;
+  que_obtendras?: string;
   ejemplo_uso: string;
   fecha: string;
 }
@@ -68,6 +70,13 @@ export default function PromptDelDiaPage() {
               </div>
               <h2 className="text-lg font-semibold text-navy mb-4">{prompt.titulo}</h2>
 
+              {prompt.que_hace && (
+                <div className="mb-4">
+                  <span className="text-xs font-semibold text-navy uppercase tracking-wide">Que hace este prompt</span>
+                  <p className="mt-1.5 text-sm text-gray-700 leading-relaxed">{prompt.que_hace}</p>
+                </div>
+              )}
+
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-semibold text-gray-text uppercase tracking-wide">Prompt</span>
@@ -78,6 +87,13 @@ export default function PromptDelDiaPage() {
                 </div>
                 <pre className="whitespace-pre-wrap text-sm bg-gray-bg border border-gray-200 rounded-xl p-4 font-sans">{prompt.prompt_texto}</pre>
               </div>
+
+              {prompt.que_obtendras && (
+                <div className="mb-4 p-3 rounded-lg bg-emerald-50 border border-emerald-200">
+                  <span className="text-xs font-semibold text-emerald-800 uppercase tracking-wide">Que obtendras</span>
+                  <p className="mt-1.5 text-sm text-emerald-700 leading-relaxed">{prompt.que_obtendras}</p>
+                </div>
+              )}
 
               <div>
                 <span className="text-xs font-semibold text-gold uppercase tracking-wide">Como usarlo</span>
