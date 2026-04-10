@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Wand2, BookMarked, Library, Sparkles, Lightbulb, HelpCircle, Copy, Check } from "lucide-react";
+import { Wand2, BookMarked, Library, Sparkles, Lightbulb, HelpCircle, Copy, Check, Newspaper } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 
 interface PromptDia {
@@ -21,6 +21,7 @@ const ACTIONS = [
   { href: "/biblioteca", icon: Library, title: "Biblioteca", description: "Prompts compartidos por otros directores", color: "bg-navy/80" },
   { href: "/tips", icon: Lightbulb, title: "Tips Rapidos", description: "Consejos semanales para usar IA mejor", color: "bg-navy/60" },
   { href: "/faq", icon: HelpCircle, title: "FAQ", description: "Respuestas a preguntas frecuentes sobre IA", color: "bg-navy/40" },
+  { href: "/novedades", icon: Newspaper, title: "Novedades", description: "Noticias y articulos relevantes sobre IA", color: "bg-gold/60" },
 ];
 
 const catColors: Record<string, string> = {
